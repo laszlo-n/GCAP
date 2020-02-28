@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using EFOP;
@@ -42,7 +38,7 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                return EFOP.JSONSerializer.SerializeChunk(id, 1, 1); ;
+                return EFOP.JSONSerializer.SerializeChunk(id, 0, 0); ;
             }
             catch (ArgumentOutOfRangeException e)
             {
