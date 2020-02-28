@@ -26,7 +26,7 @@ namespace EFOP
         /// <returns>The JSON array created, as a string.</returns>
         public static string SerializeChunk(int simulation, int x, int y)
         {
-            Simulation s = SimulationHandler.GetSimulation(simulation);
+            Simulation s = SimulationHandler.GetSimulationById(simulation);
             List<(Point, ICellContent)> chunkContents = s.GetContentsOfChunk(new Point(x, y));
 
             StringBuilder json = new StringBuilder();
