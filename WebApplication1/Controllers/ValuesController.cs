@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
 
 using EFOP;
 namespace WebApplication1.Controllers
@@ -46,52 +40,7 @@ namespace WebApplication1.Controllers
         }
         */
         
-        //a nulladik szimulációt adja vissza, aktuális körrel
-        // GET api/values
-        [HttpGet]
 
-        public string Get()
-        {
-            try
-            {
-                return EFOP.JSONSerializer.SerializeChunk(0, 0, 0);
-            }
-            catch(ArgumentOutOfRangeException)
-            {
-                return "{\"message\":\"There is no simulation\"}";
-            }
-        
-        }
-        //a ötötdik szimulációt adja vissza 200 körrel
-        // GET api/values/5
-        public string Get(int id)
-        {
-            try
-            {
-                return EFOP.JSONSerializer.SerializeChunk(id, 0, 0); ;
-            }
-            catch(ArgumentOutOfRangeException)
-            {
-                return "{\"message\":\"There is no simulation with this number\"}";
-            }
-        }
-        /*
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }*/
-        
-
-        //api/getstate
-        //visszaadná a jelenlegi állapot sorszámát 
-
-        public String PostStartSimulation()
-        {
-            SimulationHandler.StartNew(200);
-            return $"{{\"simulationNumber\":\"{SimulationHandler.GetSimulationCount() - 1}\"}}"; // "{"simulationNumber":"3"}
-        }
         public long GetState(int simulation)
         {
             try
@@ -108,6 +57,8 @@ namespace WebApplication1.Controllers
         {
 
         }
+
+
         //worldchunk.GetContentList
 
         //api/switchstate? val = -1
