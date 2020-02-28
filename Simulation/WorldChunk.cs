@@ -207,8 +207,12 @@ namespace EFOP
 			}
 		}
 		
-		public List<(Point, ICellContent)> GetContentList()
+		public List<(Point, ICellContent)> GetContentList(System.IO.StreamWriter logger = null)
 		{
+			if(logger != null)
+			{
+				logger.WriteLine($"Chunk {this.Location.X},{this.Location.Y} has {this.ChunkContents.Count} contents...");
+			}
 			List<(Point, ICellContent)> result = new List<(Point, ICellContent)>();
 			foreach(KeyValuePair<Point, ICellContent> content in this.ChunkContents)
 			{

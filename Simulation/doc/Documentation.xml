@@ -4,6 +4,25 @@
         <name>Simulation</name>
     </assembly>
     <members>
+        <member name="M:EFOP.Archives.SimulationArchive.GetRoundJSON(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Gets the contents of the simulation at a given round and chunk.
+            </summary>
+            <param name="round">
+                The round to calculate.
+                Rounds start from 1.
+                Round 0 means the initial state of the simulation.
+            </param>
+            <param name="chunkX">
+                The X coordinate of the chunk.
+                This is a number dividable by WorldChunk.ChunkSize.
+            </param>
+            <param name="chunkY">
+                The Y coordinate of the chunk.
+                This is a number dividable by WorldChunk.ChunkSize.
+            </param>
+            <returns>The contents of the simulation at a given round in a given chunk.</returns>
+        </member>
         <member name="T:EFOP.AutomatonPlacementStrategy">
             <summary>
             Lists the available options for how to generate the location of automatons when a simulation is initialized.

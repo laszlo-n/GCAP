@@ -114,6 +114,7 @@ namespace EFOP
 				}
 				Console.WriteLine();
 				
+				++ this.Round;
 				this.OnRoundPassed(this.Round);
 				
 				if(this.Configuration.LogToFile)
@@ -121,7 +122,6 @@ namespace EFOP
 					SaveWorldState($"{Simulation.GetDataDirectory(this.ID)}/round{this.Round}.gcasim", roundData);
 				}
 
-				++ this.Round;
 				if(this.Round >= this.Configuration.StopAtRound)
 				{
 					this.Stop();
@@ -222,6 +222,43 @@ namespace EFOP
 				case AutomatonPlacementStrategy.SingleGroup:
 					this.PlaceWithSingleGroupStrategy();
 					break;
+			}
+
+			if(this.Configuration.LogToFile)
+			{
+				using(StreamWriter ki = new StreamWriter($"./sim_{this.ID}/initial.gcasim"))
+				using(StreamWriter log = new StreamWriter($"./sim_{this.ID}/initial.log"))
+				{
+					log.WriteLine("Started...");
+					foreach(KeyValuePair<Point, WorldChunk> chunk in this._chunks)
+					{
+						JSONArray contents = new JSONArray();
+						List<(Point, ICellContent)> contentList = chunk.Value.GetContentList(log);
+
+						log.WriteLine($"Number of contents in chunk {chunk.Key.X},{chunk.Key.Y}: {contentList.Count}");
+						foreach((Point, ICellContent) content in contentList)
+						{
+							JSONObject contentObject = new JSONObject();
+							contentObject.AddIntChild("X", content.Item1.X);
+							contentObject.AddIntChild("Y", content.Item1.Y);
+							contentObject.AddStringChild("Type", content.Item2.CharCode.ToString());
+							if(content.Item2.CharCode == 'a')
+							{
+								contentObject.AddIntChild("UID", content.Item2.UID);
+							}
+
+							contents.AddObjectItem(contentObject);
+						}
+						log.WriteLine($"Added contents to JSON: {contents.Count}");
+
+						JSONObject chunkData = new JSONObject();
+						chunkData.AddIntChild("chunkX", chunk.Key.X);
+						chunkData.AddIntChild("chunkY", chunk.Key.Y);
+						chunkData.AddArrayChild("data", contents);
+
+						ki.WriteLine(chunkData.ToString());
+					}
+				}
 			}
 		}
 		
