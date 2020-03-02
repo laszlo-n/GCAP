@@ -43,6 +43,7 @@ canvas {
   right: 1em;
   bottom: 1em;
   z-index: 3;
+  visibility: hidden;
 }
 
 /* Chrome, Safari, Edge, Opera */

@@ -10,6 +10,8 @@ var currentlyHighlighted = null;
 var vpMinCorner = [], vpMaxCorner = [];
 window.onresize = updateSize;
 
+
+
 var simLaunched = false;
 
 function mouseDragged() {
@@ -33,18 +35,24 @@ function setup() {
     console.log(cellGrid);
 }
 
-async function initSimulation() {
-    if (!simLaunched) await fetch("api/StartSimulation");
+async function initSimulation(roundcount) {
+	let simID = 0;
+    if (!simLaunched) simID = await fetch("api/StartSimulation/" + roundcount);
     simLaunched = true;
+    return simID;
 }
 
 async function loadServerData() {
-    await initSimulation();
-    let response = await fetch("api/GetSimulation");
+    let simID = await initSimulation(200);
+    simID = await simID.json();
+    console.log(simID["simulationNumber"]);
+
+    let response = await fetch("api/GetSimulation/" + simID["simulationNumber"]);
     console.log(response);
 	let myJson = await response.json();
 
 	await updateChunk(cellGrid, myJson);
+	document.getElementById("simPager").style.visibility = "visible";
 }
 
 function draw() {

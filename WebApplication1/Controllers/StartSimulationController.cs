@@ -39,7 +39,7 @@ namespace WebApplication1.Controllers
         /// <returns> A json object like this "{"simulationNumber":"3"}". 
         /// If the given value positive the simulation was successful, otherwise the simulation was unsuccessful.
         /// </returns>
-        [HttpGet("{round}", Name = "GetRound")]
+        [HttpGet("{round}")]
         public String GetRound(int round)
         {
             try
