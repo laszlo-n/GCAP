@@ -65,6 +65,6 @@ namespace WebApplication1.Controllers
             {
                 return "\"message\":\"There is no simulation with this number\"";
             }
-        }*/
+        }
     }
 }
