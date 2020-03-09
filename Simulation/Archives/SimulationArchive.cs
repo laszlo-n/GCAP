@@ -108,6 +108,8 @@ namespace EFOP.Archives
                     while(!be.EndOfStream)
                     {
                         JSONObject chunkData = new JSONObject(be.ReadLine());
+                        string[] chunkCoordinates = chunkData.GetStringChild(ChunkXYKey).Split(",");
+                        Point chunkCoord = new Point(int.Parse(chunkCoordinates[0]), int.Parse(chunkCoordinates[1]));
                         
                         // remove dead automata
                         JSONArray deaths = chunkData.GetArrayChild(DeathKey);
@@ -133,22 +135,27 @@ namespace EFOP.Archives
                         
                         // move existing automata
                         JSONObject movements = chunkData.GetObjectChild(MovementKey);
-                        string[] chunkCoordinates = chunkData.GetStringChild(ChunkXYKey).Split(",");
-                        Point chunkCoord = new Point(int.Parse(chunkCoordinates[0]), int.Parse(chunkCoordinates[1]));
-
+                        
                         foreach(KeyValuePair<string, object> movement in movements.GetChildren())
                         {
-                            int uid = int.Parse(movement.Key);
-                            string[] coordinates = ((string)movement.Value).Split(",");
-                            Point newCoord = new Point(int.Parse(coordinates[0]), int.Parse(coordinates[1]));
+                            try
+                            {
+                                int uid = int.Parse(movement.Key);
+                                string[] coordinates = ((string)movement.Value).Split(",");
+                                Point newCoord = new Point(int.Parse(coordinates[0]), int.Parse(coordinates[1]));
 
-                            Point oldCoord = automatonUIDs[uid];
-                            Automaton a = (Automaton)contents[GetChunkFromPoint(oldCoord)][oldCoord];
-                            contents[GetChunkFromPoint(oldCoord)].Remove(oldCoord);
+                                Point oldCoord = automatonUIDs[uid];
+                                Automaton a = (Automaton)contents[GetChunkFromPoint(oldCoord)][oldCoord];
+                                contents[GetChunkFromPoint(oldCoord)].Remove(oldCoord);
 
-                            // TODO: detect overwrites
-                            automatonUIDs[uid] = newCoord;
-                            contents[GetChunkFromPoint(newCoord)][newCoord] = a;
+                                // TODO: detect overwrites
+                                automatonUIDs[uid] = newCoord;
+                                contents[GetChunkFromPoint(newCoord)][newCoord] = a;
+                            }
+                            catch(KeyNotFoundException ex)
+                            {
+                                // TODO
+                            }
                         }
                     }
                 }
@@ -185,22 +192,23 @@ namespace EFOP.Archives
                     for(int i = 0; i < data.Count; i ++)
                     {
                         JSONObject cellContent = (JSONObject)data[i];
-
+                        Point relLoc = new Point(cellContent.GetIntChild(XKey), cellContent.GetIntChild(YKey));
+                        Point absLoc = new Point(coordinates.X + relLoc.X, coordinates.Y + relLoc.Y);
+                        
                         switch(cellContent.GetStringChild(TypeKey))
                         {
                             case "t":
                                 Tree t = new Tree(0);
-                                tmpContents.Add(new Point(cellContent.GetIntChild(XKey), cellContent.GetIntChild(YKey)), t);
+                                tmpContents.Add(absLoc, t);
                                 break;
                             case "a":
                                 Automaton a = new Automaton(cellContent.GetIntChild(UIDKey));
-                                Point loc = new Point(cellContent.GetIntChild(XKey), cellContent.GetIntChild(YKey));
-                                tmpContents.Add(loc, a);
-                                automatonUIDs.Add(a.UID, loc);
+                                tmpContents.Add(absLoc, a);
+                                automatonUIDs.Add(a.UID, absLoc);
                                 break;
                             case "l":
                                 Lion l = new Lion(0);
-                                tmpContents.Add(new Point(cellContent.GetIntChild(XKey), cellContent.GetIntChild(YKey)), l);
+                                tmpContents.Add(absLoc, l);
                                 break;
                         }
                     }
