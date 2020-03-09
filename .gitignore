@@ -2,6 +2,7 @@
 .vscode
 **/obj
 **/bin
+Simulation/doc/*
 WebApplication1/sim_*
 WebApplication1/*.txt
 

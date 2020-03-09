@@ -101,6 +101,7 @@ namespace JSONSerializer
             throw new ArgumentException("No end of object.");
         }
 
+        #region add and remove elements
         public void AddObjectChild(string key, JSONObject value)
             => Add(key, value == null ? JSONType.Null : JSONType.Object, value);
 
@@ -134,6 +135,89 @@ namespace JSONSerializer
         {
             this.children.Add(key, new Tuple<JSONType, Object>(type, value));
         }
+        #endregion
+
+        #region get elements
+        public List<KeyValuePair<string, object>> GetChildren()
+        {
+            List<KeyValuePair<string, object>> result = new List<KeyValuePair<string, object>>();
+
+            foreach(KeyValuePair<string, Tuple<JSONType, object>> child in this.children)
+            {
+                result.Add(new KeyValuePair<string, object>(child.Key, child.Value.Item2));
+            }
+
+            return result;
+        }
+        
+        public (JSONType, object) GetChild(string key)
+        {
+            try
+            {
+                Tuple<JSONType, Object> child = children[key];
+                return (child.Item1, child.Item2);
+            }
+            catch(KeyNotFoundException ex)
+            {
+                throw new KeyNotFoundException("A child with the given key couldn't be found in this JSON object.", ex);
+            }
+        }
+
+        public string GetStringChild(string key)
+        {
+            var tmp = this.GetChild(key);
+            if(tmp.Item1 != JSONType.String)
+            {
+                throw new InvalidOperationException($"The child with key {key} couldn't be converted to string.");
+            }
+
+            return (string)tmp.Item2;
+        }
+
+        public int GetIntChild(string key)
+        {
+            var tmp = this.GetChild(key);
+            if(tmp.Item1 != JSONType.Number)
+            {
+                throw new InvalidOperationException($"The child with key {key} couldn't be converted to int.");
+            }
+
+            return (int)tmp.Item2;
+        }
+
+        public bool GetBoolChild(string key)
+        {
+            var tmp = this.GetChild(key);
+            if(tmp.Item1 != JSONType.Boolean)
+            {
+                throw new InvalidOperationException($"The child with key {key} couldn't be converted to boolean.");
+            }
+
+            return (bool)tmp.Item2;
+        }
+
+        public JSONArray GetArrayChild(string key)
+        {
+            var tmp = this.GetChild(key);
+            if(tmp.Item1 != JSONType.Array)
+            {
+                throw new InvalidOperationException($"The child with key {key} couldn't be converted to JSONArray.");
+            }
+
+            return (JSONArray)tmp.Item2;
+        }
+
+        public JSONObject GetObjectChild(string key)
+        {
+            var tmp = this.GetChild(key);
+            if(tmp.Item1 != JSONType.Object)
+            {
+                throw new InvalidOperationException($"The child with key {key} couldn't be converted to JSONObject.");
+            }
+
+            return (JSONObject)tmp.Item2;
+        }
+        #endregion
 
         public override string ToString()
         {

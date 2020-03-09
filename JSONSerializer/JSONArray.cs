@@ -21,6 +21,14 @@ namespace JSONSerializer
             this.items = JSONArray.FromString(source).items;
         }
 
+        public int Count
+        {
+            get
+            {
+                return items.Count;
+            }
+        }
+
         internal static JSONArray FromString(string source)
         {
             StringReader instream = new StringReader(source);
@@ -70,6 +78,14 @@ namespace JSONSerializer
                 }
             }
             throw new ArgumentException("No end of array.");
+        }
+
+        public object this[int index]
+        {
+            get
+            {
+                return items[index].Item2;
+            }
         }
 
         public void AddObjectItem(JSONObject item)
