@@ -10,6 +10,8 @@ var currentlyHighlighted = null;
 var vpMinCorner = [], vpMaxCorner = [];
 window.onresize = updateSize;
 
+var simID = 0;
+
 var simLaunched = false;
 
 function mouseDragged() {
@@ -45,9 +47,14 @@ function next() {
 	document.getElementById("simID").onchange();
 }
 
-function requestRound() {
-	console.log("check");
+async function requestRound() {
+	// https://localhost:44339/api/GetSimulation?id=1284113452&round=1&x=0&y=0
+	let response = await fetch("api/GetSimulation?id=" + simID["simulationID"] + "&round=" + document.getElementById("simID").value + "&x=0&y=0");
+    console.log(response);
+	let myJson = await response.json();
+	console.log(myJson);
 
+	await updateChunk(cellGrid, myJson);
 	// await updateChunk(cellGrid, myJson);
 }
 
@@ -59,13 +66,14 @@ async function initSimulation(roundcount) {
 }
 
 async function loadServerData() {
-    let simID = await initSimulation(200);
+    simID = await initSimulation(200);
     simID = await simID.json();
-    console.log(simID["simulationNumber"]);
+    console.log(simID["simulationID"]);
 
-    let response = await fetch("api/GetSimulation/" + simID["simulationNumber"]);
+    let response = await fetch("api/GetSimulation?id=" + simID["simulationID"] + "&round=1&x=0&y=0");
     console.log(response);
 	let myJson = await response.json();
+	console.log(myJson);
 
 	await updateChunk(cellGrid, myJson);
 	document.getElementById("simPager").style.visibility = "visible";
@@ -167,6 +175,7 @@ class HexCell {
 }
 
 async function updateChunk(grid, src) {
+	grid.forEach(elem => { elem.content = ""; });
 	grid.forEach(elem => {
 		src.filter(input => input.X == elem.gridRefX && input.Y == elem.gridRefY)
 		   .forEach(item => {
