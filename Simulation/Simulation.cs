@@ -19,6 +19,8 @@ namespace EFOP
 	/// </summary>
 	public class Simulation
 	{
+		private static string _baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GCAP/");
+
 		/// <summary>
 		/// This event happens when a round has been computed.
 		/// </summary>
@@ -143,7 +145,7 @@ namespace EFOP
 		}
 
 		public static String GetDataDirectory(int simulationID)
-			=> $"sim_{simulationID}";
+			=> Path.Combine(_baseDir, $"sim_{simulationID}/");
 
 		/// <summary>
 		/// Gets the ID of a simulation from the name of its data directory.
@@ -226,8 +228,10 @@ namespace EFOP
 
 			if(this.Configuration.LogToFile)
 			{
-				using(StreamWriter ki = new StreamWriter($"./sim_{this.ID}/initial.gcasim"))
-				using(StreamWriter log = new StreamWriter($"./sim_{this.ID}/initial.log"))
+				string dir = Simulation.GetDataDirectory(this.ID);
+
+				using(StreamWriter ki = new StreamWriter(Path.Combine(dir, "initial.gcasim")))
+				using(StreamWriter log = new StreamWriter(Path.Combine(dir, "initial.log")))
 				{
 					log.WriteLine("Started...");
 					foreach(KeyValuePair<Point, WorldChunk> chunk in this._chunks)

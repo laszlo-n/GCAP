@@ -13,6 +13,7 @@ namespace EFOP.Archives
 {
     public class SimulationArchive
     {
+        private static string _baseDir;
         private string _dirName;
         private int _currentRound = 0;
 
@@ -21,9 +22,14 @@ namespace EFOP.Archives
         private Dictionary<Point, Dictionary<Point, ICellContent>> contents;
         private Dictionary<int, Point> automatonUIDs;
 
+        static SimulationArchive()
+        {
+            _baseDir = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GCAP/");
+        }
+
         public SimulationArchive(int id)
         {
-            _dirName = $"./sim_{id}";
+            _dirName = Path.Combine(_baseDir, $"sim_{id}/");
 
             if(!Directory.Exists(_dirName))
             {

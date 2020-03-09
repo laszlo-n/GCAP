@@ -14,9 +14,9 @@ namespace EFOP
             //Console.WriteLine(new JSONObject(json).ToString());
 			//Simulation s = SimulationHandler.StartNew(2000);
             //Console.WriteLine($"Started simulation with ID #{s.ID}.");
-
-            Console.WriteLine("Loading simulation with ID: 1609954104...");
-            SimulationArchive archive = new SimulationArchive(1609954104);
+            
+            Console.WriteLine("Loading simulation with ID: 575679314...");
+            SimulationArchive archive = new SimulationArchive(575679314);
         }
     }
 }
