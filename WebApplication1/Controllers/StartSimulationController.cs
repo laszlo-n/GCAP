@@ -24,9 +24,10 @@ namespace WebApplication1.Controllers
                 Simulation s = SimulationHandler.StartNew(100);
                 return $"{{\"simulationID\":\"{s.ID.ToString()}\"}}"; 
             }
+
             catch (ArgumentOutOfRangeException e)
             {
-                return $"{{\"simulationID\":\"-1\"}}";
+                return $"{{\"simulationNumber\":\"-1\"}}";
             }
 
         }
