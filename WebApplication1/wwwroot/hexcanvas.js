@@ -10,8 +10,6 @@ var currentlyHighlighted = null;
 var vpMinCorner = [], vpMaxCorner = [];
 window.onresize = updateSize;
 
-
-
 var simLaunched = false;
 
 function mouseDragged() {
@@ -33,6 +31,24 @@ function setup() {
 			cellGrid.push(new HexCell(j, i));
 
     console.log(cellGrid);
+}
+
+function prev() {
+	if (document.getElementById("simID").value != 0) {
+		document.getElementById("simID").value--;
+		document.getElementById("simID").onchange();
+	}
+}
+
+function next() {
+	document.getElementById("simID").value++;
+	document.getElementById("simID").onchange();
+}
+
+function requestRound() {
+	console.log("check");
+
+	// await updateChunk(cellGrid, myJson);
 }
 
 async function initSimulation(roundcount) {
