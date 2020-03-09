@@ -22,11 +22,11 @@ namespace WebApplication1.Controllers
             try
             {
                 Simulation s = SimulationHandler.StartNew(100);
-                return $"{{\"simulationNumber\":\"{s.ID.ToString()}\"}}"; 
+                return $"{{\"simulationID\":\"{s.ID.ToString()}\"}}"; 
             }
             catch (ArgumentOutOfRangeException e)
             {
-                return $"{{\"simulationNumber\":\"-1\"}}";
+                return $"{{\"simulationID\":\"-1\"}}";
             }
 
         }
@@ -45,11 +45,11 @@ namespace WebApplication1.Controllers
             try
             {
                 Simulation s = SimulationHandler.StartNew(round);
-                return $"{{\"simulationNumber\":\"{s.ID.ToString()}\"}}";
+                return $"{{\"simulationID\":\"{s.ID.ToString()}\"}}";
             }
             catch (ArgumentOutOfRangeException e)
             {
-                return $"{{\"simulationNumber\":\"-1\"}}";
+                return $"{{\"simulationID\":\"-1\"}}";
             }
 
         }

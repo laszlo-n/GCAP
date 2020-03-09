@@ -33,12 +33,14 @@ namespace WebApplication1.Controllers
         /// First you need to start quantity of id simulation to use it. If there is the idth simulation, you can get the 0. chunk of the idth simulation.
         /// GET: api/GetSimulation/5
         /// </summary>
+
         [HttpGet("{id}")]
         public string GetById(int id)
+
         {
             try
             {
-                return EFOP.JSONSerializer.SerializeChunk(id, 0, 0); ;
+                return EFOP.JSONSerializer.SerializeChunk(id, 0, 0);
             }
             catch (ArgumentOutOfRangeException e)
             {
@@ -48,9 +50,11 @@ namespace WebApplication1.Controllers
 
         /// <summary>
         /// First you need to start quantity of id simulation to use it. If there is the idth simulation, you can get the x,y  chunk of the idth simulation.
-        /// GET: api/GetSimulation/id="2"&x="200"&y="300"
+        /// The x and y coordinates must be divisible by 200, they can also be negative.
+        /// GET: api/GetSimulation/id="2"&x="200"&y="400"
         /// </summary>
-        /*[HttpGet("{id,x,y}", Name = "GetWhole")]
+
+        [HttpGet]
         public string Get(int id, int x, int y)
         {
             try
