@@ -11,7 +11,7 @@ using static EFOP.Archives.JSONStructure;
 
 namespace EFOP.Archives
 {
-    class SimulationArchive
+    public class SimulationArchive
     {
         private string _dirName;
         private int _currentRound = 0;
