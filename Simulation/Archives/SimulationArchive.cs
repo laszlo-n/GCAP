@@ -88,7 +88,7 @@ namespace EFOP.Archives
 
         private void GoToRound(int round)
         {
-            if(round > 0 || round > this.RoundCount)
+            if(round < 0 || round > this.RoundCount)
             {
                 throw new ArgumentOutOfRangeException("The given round doesn't exist.");
             }
