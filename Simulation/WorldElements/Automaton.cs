@@ -46,7 +46,12 @@ namespace EFOP.WorldElements
 
 		private static readonly char[]	inputs;
 		private static readonly int		stateCount;
-		private int						startingState;
+		
+		/// <summary>
+		/// The number of the state this automaton starts in.
+		/// </summary>
+		/// <value>Randomly chosen in the constructor.</value>
+		public int						StartingState { get; }
 		
 		/// <summary>
 		/// Gets the wellbeing of this automaton. This is a byte value between 0 and 100.
@@ -117,7 +122,7 @@ namespace EFOP.WorldElements
 		/// <returns>An integer value representing one of the states of this automaton, which is also the direction the automaton decided to move in.</returns>
 		public int ComputeState(string input)
 		{
-			int state = this.startingState;
+			int state = this.StartingState;
 			foreach(char c in input)
 			{
 				state = this.movements[(state, c)];
@@ -190,7 +195,7 @@ namespace EFOP.WorldElements
 		{
 			this.UID				= uid;
 			this.movements			= new Dictionary<(int, char), int>();
-			this.startingState		= Automaton.rnGenerator.Next(stateCount);
+			this.StartingState		= Automaton.rnGenerator.Next(stateCount);
 			this.WellBeingPercent	= 50;
 
 			if(generateRandomWiring)
@@ -215,7 +220,7 @@ namespace EFOP.WorldElements
 		public Automaton(int uid, Automaton parent, bool mutate = true)
 		{
 			this.UID				= uid;
-			this.startingState		= parent.startingState;
+			this.StartingState		= parent.StartingState;
 			this.WellBeingPercent	= 50;
 			this.movements			= parent.GetWiring();
 			

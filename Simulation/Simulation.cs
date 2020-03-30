@@ -53,8 +53,10 @@ namespace EFOP
 		private Dictionary<Point, WorldChunk> _chunks;
 		
 		/// <summary>
-		/// Initializes a simulation of infinite size with the default configuration.
+		/// Initializes a simulation with the default configuration.
 		/// </summary>
+		/// <param name="id">The unique ID of this simulation.</param>
+		/// <param name="logToFile">Whether or not to log this simulation to disk.</param>
 		public Simulation(int id, bool logToFile = true)
 		{
 			this.Configuration	= new SimConfiguration()
@@ -64,6 +66,25 @@ namespace EFOP
 			this.Round			= 0;
 			this.Families		= new List<FamilyTree>();
 			this.ID				= id;
+			if(this.Configuration.LogToFile)
+			{
+				Directory.CreateDirectory(Simulation.GetDataDirectory(this.ID));
+			}
+			this.GenerateInitialWorldState();
+		}
+
+		/// <summary>
+		/// Initializes a simulation with the given configuration.
+		/// </summary>
+		/// <param name="id">The unique ID of this simulation.</param>
+		/// <param name="configuration">The configuration to use in this simulation.</param>
+		/// <param name="logToFile">Whether or not to log this simulation to disk.</param>
+		public Simulation(int id, SimConfiguration configuration, bool logToFile = true)
+		{
+			this.Configuration = configuration;
+			this.Round = 0;
+			this.Families = new List<FamilyTree>();
+			this.ID = id;
 			if(this.Configuration.LogToFile)
 			{
 				Directory.CreateDirectory(Simulation.GetDataDirectory(this.ID));
@@ -246,9 +267,22 @@ namespace EFOP
 							contentObject.AddIntChild("X", content.Item1.X);
 							contentObject.AddIntChild("Y", content.Item1.Y);
 							contentObject.AddStringChild("Type", content.Item2.CharCode.ToString());
+							contentObject.AddIntChild("UID", content.Item2.UID);
 							if(content.Item2.CharCode == 'a')
 							{
-								contentObject.AddIntChild("UID", content.Item2.UID);
+								Automaton a = (Automaton)content.Item2;
+								contentObject.AddIntChild("startState", a.StartingState);
+								JSONArray stateTransitions = new JSONArray();
+								Dictionary<(int, char), int> wiring = a.GetWiring();
+								foreach(KeyValuePair<(int, char), int> transition in wiring)
+								{
+									JSONObject transitionObject = new JSONObject();
+									transitionObject.AddIntChild("from", transition.Key.Item1);
+									transitionObject.AddStringChild("through", transition.Key.Item2.ToString());
+									transitionObject.AddIntChild("to", transition.Value);
+									stateTransitions.AddObjectItem(transitionObject);
+								}
+								contentObject.AddArrayChild("wiring", stateTransitions);
 							}
 
 							contents.AddObjectItem(contentObject);
