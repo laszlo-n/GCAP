@@ -105,6 +105,20 @@ namespace EFOP
 								spawn.AddIntChild("childUID", child.UID);
 								spawn.AddIntChild("childX", childLoc.X);
 								spawn.AddIntChild("childY", childLoc.Y);
+								spawn.AddIntChild("childStartState", child.StartingState);
+
+								JSONArray stateTransitions = new JSONArray();
+								Dictionary<(int, char), int> wiring = child.GetWiring();
+								foreach(KeyValuePair<(int, char), int> transition in wiring)
+								{
+									JSONObject transitionObject = new JSONObject();
+									transitionObject.AddIntChild("from", transition.Key.Item1);
+									transitionObject.AddStringChild("through", transition.Key.Item2.ToString());
+									transitionObject.AddIntChild("to", transition.Value);
+									stateTransitions.AddObjectItem(transitionObject);
+								}
+								spawn.AddArrayChild("childWiring", stateTransitions);
+
 								spawns.AddObjectItem(spawn);
 								foreach(FamilyTree f in this.parent.Families)
 								{
