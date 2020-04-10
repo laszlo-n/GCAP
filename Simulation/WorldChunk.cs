@@ -38,6 +38,7 @@ namespace EFOP
 			JSONObject finalMovements = new JSONObject();
 			JSONArray spawns = new JSONArray();
 			JSONArray deaths = new JSONArray();
+			JSONObject healthUpdates = new JSONObject();
 
 			foreach(KeyValuePair<Point, ICellContent> content in this.ChunkContents)
 			{
@@ -47,10 +48,16 @@ namespace EFOP
 					Point absoluteOldLocation = new Point(this.Location.X + content.Key.X, this.Location.Y + content.Key.Y);
 					(string automatonInput, int harvestableTrees) = this.parent.GetSurroundings(absoluteOldLocation, true);
 					int movement = a.ComputeState(automatonInput);
+					int hpBefore = a.WellBeingPercent;
 					a.UpdateWellBeing(harvestableTrees, automatonInput.Count(e => e == 'l'));
 					
 					if(!a.IsDead)
 					{
+						if(hpBefore != a.WellBeingPercent)
+						{
+							healthUpdates.AddIntChild(a.UID.ToString(), a.WellBeingPercent);
+						}
+
 						Point newLocation;
 						switch(movement)
 						{
@@ -99,6 +106,8 @@ namespace EFOP
 								this.parent.PlaceChildAutomaton(content.Key, a);
 							if(success)
 							{
+								healthUpdates.AddIntChild(child.UID.ToString(), child.WellBeingPercent);
+
 								Console.WriteLine($"Automaton #{a.UID} multiplied successfully.");
 								JSONObject spawn = new JSONObject();
 								spawn.AddIntChild("parentUID", a.UID);
@@ -152,6 +161,7 @@ namespace EFOP
 			result.AddObjectChild("movements", finalMovements);
 			result.AddArrayChild("spawns", spawns);
 			result.AddArrayChild("deaths", deaths);
+			result.AddObjectChild("healthUpdates", healthUpdates);
 			return result;
 		}
 		

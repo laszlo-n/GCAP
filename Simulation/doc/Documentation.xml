@@ -78,8 +78,18 @@
         </member>
         <member name="M:EFOP.Simulation.#ctor(System.Int32,System.Boolean)">
             <summary>
-            Initializes a simulation of infinite size with the default configuration.
+            Initializes a simulation with the default configuration.
             </summary>
+            <param name="id">The unique ID of this simulation.</param>
+            <param name="logToFile">Whether or not to log this simulation to disk.</param>
+        </member>
+        <member name="M:EFOP.Simulation.#ctor(System.Int32,EFOP.Simulation.SimConfiguration,System.Boolean)">
+            <summary>
+            Initializes a simulation with the given configuration.
+            </summary>
+            <param name="id">The unique ID of this simulation.</param>
+            <param name="configuration">The configuration to use in this simulation.</param>
+            <param name="logToFile">Whether or not to log this simulation to disk.</param>
         </member>
         <member name="M:EFOP.Simulation.Start(System.Int32)">
             <summary>
@@ -177,6 +187,12 @@
             <summary>
             Call this method when you want to fire the <see cref="E:EFOP.WorldElements.Automaton.Die" /> event.
             </summary>
+        </member>
+        <member name="P:EFOP.WorldElements.Automaton.StartingState">
+            <summary>
+            The number of the state this automaton starts in.
+            </summary>
+            <value>Randomly chosen in the constructor.</value>
         </member>
         <member name="P:EFOP.WorldElements.Automaton.WellBeingPercent">
             <summary>
