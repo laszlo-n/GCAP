@@ -272,6 +272,7 @@ namespace EFOP
 							{
 								Automaton a = (Automaton)content.Item2;
 								contentObject.AddIntChild("startState", a.StartingState);
+								contentObject.AddIntChild("health", a.WellBeingPercent);
 								JSONArray stateTransitions = new JSONArray();
 								Dictionary<(int, char), int> wiring = a.GetWiring();
 								foreach(KeyValuePair<(int, char), int> transition in wiring)

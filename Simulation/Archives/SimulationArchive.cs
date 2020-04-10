@@ -11,12 +11,19 @@ using static EFOP.Archives.JSONStructure;
 
 namespace EFOP.Archives
 {
+    /// <summary>
+    /// This class is responsible for loading simulations that were previously saved to disk.
+    /// </summary>
     public class SimulationArchive
     {
         private static string _baseDir;
         private string _dirName;
         private int _currentRound = 0;
 
+        /// <summary>
+        /// Gets the number of rounds done in this simulation.
+        /// </summary>
+        /// <value>The total number of rounds.</value>
         public int RoundCount { get; } = 0;
 
         private Dictionary<Point, Dictionary<Point, ICellContent>> contents;
@@ -27,6 +34,10 @@ namespace EFOP.Archives
             _baseDir = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GCAP/");
         }
 
+        /// <summary>
+        /// Creates a ne instance of the SimulationArchive class.
+        /// </summary>
+        /// <param name="id">The unique numerical id of the simulation to load.</param>
         public SimulationArchive(int id)
         {
             _dirName = Path.Combine(_baseDir, $"sim_{id}/");
