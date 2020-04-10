@@ -96,6 +96,7 @@
         <member name="M:EFOP.Simulation.#ctor(System.Int32,System.Boolean)">
             <summary>
             Initializes a simulation with the default configuration.
+<<<<<<< HEAD
             </summary>
             <param name="id">The unique ID of this simulation.</param>
             <param name="logToFile">Whether or not to log this simulation to disk.</param>
@@ -105,6 +106,17 @@
             Initializes a simulation with the given configuration.
             </summary>
             <param name="id">The unique ID of this simulation.</param>
+=======
+            </summary>
+            <param name="id">The unique ID of this simulation.</param>
+            <param name="logToFile">Whether or not to log this simulation to disk.</param>
+        </member>
+        <member name="M:EFOP.Simulation.#ctor(System.Int32,EFOP.Simulation.SimConfiguration,System.Boolean)">
+            <summary>
+            Initializes a simulation with the given configuration.
+            </summary>
+            <param name="id">The unique ID of this simulation.</param>
+>>>>>>> update archive
             <param name="configuration">The configuration to use in this simulation.</param>
             <param name="logToFile">Whether or not to log this simulation to disk.</param>
         </member>
