@@ -9,6 +9,7 @@ var defaultFillColor = [72, 72, 72];
 var currentlyHighlighted = null;
 var vpMinCorner = [], vpMaxCorner = [];
 window.onresize = updateSize;
+var previousChunkInfo = [];
 
 var simID = 0;
 
@@ -54,7 +55,7 @@ async function requestRound() {
 	let myJson = await response.json();
 	console.log(myJson);
 
-	await updateChunk(cellGrid, myJson);
+	await updateChunk2(cellGrid, myJson);
 	// await updateChunk(cellGrid, myJson);
 }
 
@@ -75,7 +76,7 @@ async function loadServerData() {
 	let myJson = await response.json();
 	console.log(myJson);
 
-	await updateChunk(cellGrid, myJson);
+	await updateChunk2(cellGrid, myJson);
 	document.getElementById("simPager").style.visibility = "visible";
 }
 
@@ -184,4 +185,32 @@ async function updateChunk(grid, src) {
 		    	else if (item.Type == "a") elem.content = "🧠";
 		   })
 	});
+}
+
+async function updateChunk2(grid, src) {
+	document.getElementById("simID").setAttribute('onchange', '');
+	document.getElementById("prevButton").setAttribute('onchange', '');
+	document.getElementById("nextButton").setAttribute('onchange', '');
+	console.log(src);
+
+	// ISSUE: backend resends cells that didn't move also, needs fixing
+
+	previousChunkInfo.forEach(item => {
+		grid.find(elem =>
+			elem.gridRefX == item.X && elem.gridRefY == item.Y).content = "";
+	});
+
+	src.forEach(item => {
+		let objReference = grid.find(elem => 
+			elem.gridRefX == item.X && elem.gridRefY == item.Y);
+
+		if (item.Type == "t") objReference.content = "🌳";
+		else if (item.Type == "l") objReference.content = "🦁";
+		else if (item.Type == "a") objReference.content = "🧠";
+	});
+
+	previousChunkInfo = src;
+	document.getElementById("simID").setAttribute('onchange', 'requestRound()');
+	document.getElementById("prevButton").setAttribute('onchange', 'prev()');
+	document.getElementById("nextButton").setAttribute('onchange', 'next()');
 }
