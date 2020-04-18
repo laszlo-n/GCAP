@@ -91,7 +91,7 @@ namespace EFOP
 			}
 			this.GenerateInitialWorldState();
 		}
-
+		
 		public static string GetChanges(int simID, int round, int chunkX, int chunkY)
 		{
 			string	dir		= Simulation.GetDataDirectory(simID);
