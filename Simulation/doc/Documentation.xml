@@ -4,6 +4,23 @@
         <name>Simulation</name>
     </assembly>
     <members>
+        <member name="T:EFOP.Archives.SimulationArchive">
+            <summary>
+            This class is responsible for loading simulations that were previously saved to disk.
+            </summary>
+        </member>
+        <member name="P:EFOP.Archives.SimulationArchive.RoundCount">
+            <summary>
+            Gets the number of rounds done in this simulation.
+            </summary>
+            <value>The total number of rounds.</value>
+        </member>
+        <member name="M:EFOP.Archives.SimulationArchive.#ctor(System.Int32)">
+            <summary>
+            Creates a ne instance of the SimulationArchive class.
+            </summary>
+            <param name="id">The unique numerical id of the simulation to load.</param>
+        </member>
         <member name="M:EFOP.Archives.SimulationArchive.GetRoundJSON(System.Int32,System.Int32,System.Int32)">
             <summary>
             Gets the contents of the simulation at a given round and chunk.
@@ -78,8 +95,18 @@
         </member>
         <member name="M:EFOP.Simulation.#ctor(System.Int32,System.Boolean)">
             <summary>
-            Initializes a simulation of infinite size with the default configuration.
+            Initializes a simulation with the default configuration.
             </summary>
+            <param name="id">The unique ID of this simulation.</param>
+            <param name="logToFile">Whether or not to log this simulation to disk.</param>
+        </member>
+        <member name="M:EFOP.Simulation.#ctor(System.Int32,EFOP.Simulation.SimConfiguration,System.Boolean)">
+            <summary>
+            Initializes a simulation with the given configuration.
+            </summary>
+            <param name="id">The unique ID of this simulation.</param>
+            <param name="configuration">The configuration to use in this simulation.</param>
+            <param name="logToFile">Whether or not to log this simulation to disk.</param>
         </member>
         <member name="M:EFOP.Simulation.Start(System.Int32)">
             <summary>
@@ -177,6 +204,12 @@
             <summary>
             Call this method when you want to fire the <see cref="E:EFOP.WorldElements.Automaton.Die" /> event.
             </summary>
+        </member>
+        <member name="P:EFOP.WorldElements.Automaton.StartingState">
+            <summary>
+            The number of the state this automaton starts in.
+            </summary>
+            <value>Randomly chosen in the constructor.</value>
         </member>
         <member name="P:EFOP.WorldElements.Automaton.WellBeingPercent">
             <summary>
