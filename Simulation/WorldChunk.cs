@@ -110,23 +110,23 @@ namespace EFOP
 
 								Console.WriteLine($"Automaton #{a.UID} multiplied successfully.");
 								JSONObject spawn = new JSONObject();
-								spawn.AddIntChild("parentUID", a.UID);
-								spawn.AddIntChild("childUID", child.UID);
-								spawn.AddIntChild("childX", childLoc.X);
-								spawn.AddIntChild("childY", childLoc.Y);
-								spawn.AddIntChild("childStartState", child.StartingState);
+								spawn.AddIntChild(JSONStructure.ParentUIDKey, a.UID);
+								spawn.AddIntChild(JSONStructure.ChildUIDKey, child.UID);
+								spawn.AddIntChild(JSONStructure.XKey, childLoc.X);
+								spawn.AddIntChild(JSONStructure.YKey, childLoc.Y);
+								spawn.AddIntChild(JSONStructure.StartState, child.StartingState);
 
 								JSONArray stateTransitions = new JSONArray();
 								Dictionary<(int, char), int> wiring = child.GetWiring();
 								foreach(KeyValuePair<(int, char), int> transition in wiring)
 								{
 									JSONObject transitionObject = new JSONObject();
-									transitionObject.AddIntChild("from", transition.Key.Item1);
-									transitionObject.AddStringChild("through", transition.Key.Item2.ToString());
-									transitionObject.AddIntChild("to", transition.Value);
+									transitionObject.AddIntChild(JSONStructure.WiringFromKey, transition.Key.Item1);
+									transitionObject.AddStringChild(JSONStructure.WiringThroughKey, transition.Key.Item2.ToString());
+									transitionObject.AddIntChild(JSONStructure.WiringToKey, transition.Value);
 									stateTransitions.AddObjectItem(transitionObject);
 								}
-								spawn.AddArrayChild("childWiring", stateTransitions);
+								spawn.AddArrayChild(JSONStructure.WiringKey, stateTransitions);
 
 								spawns.AddObjectItem(spawn);
 								foreach(FamilyTree f in this.parent.Families)
@@ -158,10 +158,10 @@ namespace EFOP
 			}
 
 			JSONObject result = new JSONObject();
-			result.AddObjectChild("movements", finalMovements);
-			result.AddArrayChild("spawns", spawns);
-			result.AddArrayChild("deaths", deaths);
-			result.AddObjectChild("healthUpdates", healthUpdates);
+			result.AddObjectChild(JSONStructure.MovementKey, finalMovements);
+			result.AddArrayChild(JSONStructure.SpawnKey, spawns);
+			result.AddArrayChild(JSONStructure.DeathKey, deaths);
+			result.AddObjectChild(JSONStructure.HealthKey, healthUpdates);
 			return result;
 		}
 		

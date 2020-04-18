@@ -7,13 +7,14 @@ using JSONSerializer;
 
 using EFOP.WorldElements;
 
-using static EFOP.Archives.JSONStructure;
+using static EFOP.JSONStructure;
 
 namespace EFOP.Archives
 {
     /// <summary>
     /// This class is responsible for loading simulations that were previously saved to disk.
     /// </summary>
+    [Obsolete("Please use the stateless Simulation.GetChanges(int, int, int, int) method instead!")]
     public class SimulationArchive
     {
         private static string _baseDir;

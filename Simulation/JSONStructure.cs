@@ -1,6 +1,6 @@
 using System;
 
-namespace EFOP.Archives
+namespace EFOP
 {
     static class JSONStructure
     {
@@ -14,10 +14,17 @@ namespace EFOP.Archives
         public const string MovementKey = "movements";
         public const string SpawnKey = "spawns";
         public const string DeathKey = "deaths";
+        public const string HealthKey = "healthUpdates";
         public const string ChunkXYKey = "chunk";
         public const string ParentUIDKey = "parentUID";
         public const string ChildUIDKey = "childUID";
         public const string childXKey = "childX";
         public const string childYKey = "childY";
+        public const string StartState = "startState";
+        public const string WiringKey = "wiring";
+
+        public const string WiringFromKey = "from";
+        public const string WiringThroughKey = "through";
+        public const string WiringToKey = "to";
     }
 }
