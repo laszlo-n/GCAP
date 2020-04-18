@@ -91,12 +91,12 @@ namespace EFOP
 			}
 			this.GenerateInitialWorldState();
 		}
-		
+
 		public static string GetChanges(int simID, int round, int chunkX, int chunkY)
 		{
 			string	dir		= Simulation.GetDataDirectory(simID);
 			
-			if(!Directory.Exists("dir"))
+			if(!Directory.Exists(dir))
 			{
 				throw new ArgumentException("No simulation found with given id.");
 			}

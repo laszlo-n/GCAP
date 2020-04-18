@@ -3,6 +3,7 @@
 **/obj
 **/bin
 Simulation/doc/*
+Simulation/doc/Documentation.xml
 WebApplication1/sim_*
 WebApplication1/*.txt
 
