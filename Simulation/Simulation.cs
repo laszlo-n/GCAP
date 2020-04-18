@@ -91,6 +91,62 @@ namespace EFOP
 			}
 			this.GenerateInitialWorldState();
 		}
+
+		public static string GetChanges(int simID, int round, int chunkX, int chunkY)
+		{
+			string	dir		= Simulation.GetDataDirectory(simID);
+			
+			if(!Directory.Exists("dir"))
+			{
+				throw new ArgumentException("No simulation found with given id.");
+			}
+
+			// initial uses "chunkX" and "chunkY" to identify chunks
+			if(round == 0)
+			{
+				using(StreamReader be = new StreamReader($"{dir}/initial.gcasim"))
+				{
+					while(!be.EndOfStream)
+					{
+						string line = be.ReadLine();
+						JSONObject chunk = new JSONObject(line);
+
+						if(chunk.GetIntChild("chunkX") == chunkX && chunk.GetIntChild("chunkY") == chunkY)
+						{
+							return line;
+						}
+					}
+
+					throw new ArgumentOutOfRangeException(nameof(chunkX), "No chunk found with provided X/Y values.");
+				}
+			}
+			// rounds use "chunk" to identify chunks
+			else
+			{
+				try
+				{
+					using(StreamReader be = new StreamReader($"{dir}/round{round}.gcasim"))
+					{
+						while(!be.EndOfStream)
+						{
+							string line = be.ReadLine();
+							JSONObject chunk = new JSONObject(line);
+							string[] chunkXY = chunk.GetStringChild("chunk").Split(",");
+							if(int.Parse(chunkXY[0]) == chunkX && int.Parse(chunkXY[1]) == chunkY)
+							{
+								return line;
+							}
+						}
+
+						throw new ArgumentOutOfRangeException(nameof(chunkX), "No chunk found with provided X/Y values.");
+					}
+				}
+				catch(FileNotFoundException ex)
+				{
+					throw new ArgumentException("Given round doesn't exist in the given simulation", nameof(round), ex);
+				}
+			}
+		}
 		
 		/// <summary>
 		/// Starts the simulation to run a given number of rounds or indefinitely if no maximum number is given.
