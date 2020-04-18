@@ -62,8 +62,9 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                SimulationArchive simulation = new SimulationArchive(id);
-                return simulation.GetRoundJSON(round, x, y);
+                return Simulation.GetChanges(id, round, x, y);
+                //SimulationArchive simulation = new SimulationArchive(id);
+                //return simulation.GetRoundJSON(round, x, y);
             }
             catch (ArgumentOutOfRangeException e)
             {
