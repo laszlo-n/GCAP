@@ -140,12 +140,10 @@ class HexCell {
 		this.gridRefY = y;
 
 		this.uid = -1;
-
 		this.content = "";
 		this.wiring = [];
 		this.startState = -1;
 		this.parentID = -1;
-
 		this.health = -1;
 
 		this.vertices = this.precalc(x, y);
