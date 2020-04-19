@@ -53,7 +53,6 @@ async function requestRound() {
 	let response = await fetch("api/GetSimulation?id=" + simID["simulationID"] + "&round=" + document.getElementById("simID").value + "&x=0&y=0");
 	console.log(response);
 	let myJson = await response.json();
-	console.log(myJson);
 
 	await updateChunk3(cellGrid, myJson);
 	// await updateChunk(cellGrid, myJson);
@@ -74,7 +73,6 @@ async function loadServerData() {
 	let response = await fetch("api/GetSimulation?id=" + simID["simulationID"] + "&round=0&x=0&y=0");
 	console.log(response);
 	let myJson = await response.json();
-	console.log(myJson);
 
 	await updateChunk3(cellGrid, myJson);
 	document.getElementById("simPager").style.visibility = "visible";
@@ -229,9 +227,8 @@ async function updateChunk3(grid, src) {
 
 	if (document.getElementById("simID").value == 0) {
 		// initial state esetén a data után kajtatunk
-		let objReference = null;
 		src.data.forEach(cell => {
-			objReference = grid.find(elem => 
+			let objReference = grid.find(elem => 
 				elem.gridRefX == cell.X && elem.gridRefY == cell.Y);
 
 			if (cell.Type == "t") objReference.content = "🌳";
@@ -253,8 +250,28 @@ async function updateChunk3(grid, src) {
 
 		src.movements.forEach(cell => {
 			objReference = grid.find(elem => elem.uid == cell.UID);
-			objReference.gridRefX = cell.X;
-			objReference.gridRefY = cell.Y;
+
+			let tempReference = grid.find(elem => 
+				elem.gridRefX == cell.X && elem.gridRefY == cell.Y);
+
+			console.log(cell.UID);
+			console.log(tempReference);
+
+			if (tempReference) {
+				tempReference.content = objReference.content;
+				tempReference.uid = objReference.uid;
+				tempReference.parentID = objReference.parentID;
+				tempReference.startState = objReference.startState;
+				tempReference.wiring = objReference.wiring;
+				tempReference.health = objReference.health;
+			}
+
+			objReference.content = "";
+			objReference.uid = -1;
+			objReference.parentID = -1;
+			objReference.startState = -1;
+			objReference.wiring = [];
+			objReference.health = -1;
 		});
 
 		src.spawns.forEach(cell => {
