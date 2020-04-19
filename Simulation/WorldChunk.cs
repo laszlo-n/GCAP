@@ -35,10 +35,10 @@ namespace EFOP
 		
 		public JSONObject ComputeRound()
 		{
-			JSONObject finalMovements = new JSONObject();
+			JSONArray finalMovements = new JSONArray();
 			JSONArray spawns = new JSONArray();
 			JSONArray deaths = new JSONArray();
-			JSONObject healthUpdates = new JSONObject();
+			JSONArray healthUpdates = new JSONArray();
 
 			foreach(KeyValuePair<Point, ICellContent> content in this.ChunkContents)
 			{
@@ -55,7 +55,11 @@ namespace EFOP
 					{
 						if(hpBefore != a.WellBeingPercent)
 						{
-							healthUpdates.AddIntChild(a.UID.ToString(), a.WellBeingPercent);
+							JSONObject healthObj = new JSONObject();
+							healthObj.AddIntChild(JSONStructure.UIDKey, a.UID);
+							healthObj.AddIntChild(JSONStructure.HealthValueKey, a.WellBeingPercent);
+
+							healthUpdates.AddObjectItem(healthObj);
 						}
 
 						Point newLocation;
@@ -92,7 +96,11 @@ namespace EFOP
 							}
 							else
 							{
-								finalMovements.AddStringChild(a.UID.ToString(), $"{absoluteNewLocation.X},{absoluteNewLocation.Y}");
+								JSONObject movementObj = new JSONObject();
+								movementObj.AddIntChild(JSONStructure.UIDKey, a.UID);
+								movementObj.AddIntChild(JSONStructure.XKey, absoluteNewLocation.X);
+								movementObj.AddIntChild(JSONStructure.YKey, absoluteNewLocation.Y);
+								finalMovements.AddObjectItem(movementObj);
 							}
 						}
 						else
@@ -106,27 +114,30 @@ namespace EFOP
 								this.parent.PlaceChildAutomaton(content.Key, a);
 							if(success)
 							{
-								healthUpdates.AddIntChild(child.UID.ToString(), child.WellBeingPercent);
+								JSONObject healthObj = new JSONObject();
+								healthObj.AddIntChild(JSONStructure.UIDKey, child.UID);
+								healthObj.AddIntChild(JSONStructure.HealthValueKey, child.WellBeingPercent);
+								healthUpdates.AddObjectItem(healthObj);
 
 								Console.WriteLine($"Automaton #{a.UID} multiplied successfully.");
 								JSONObject spawn = new JSONObject();
-								spawn.AddIntChild("parentUID", a.UID);
-								spawn.AddIntChild("childUID", child.UID);
-								spawn.AddIntChild("childX", childLoc.X);
-								spawn.AddIntChild("childY", childLoc.Y);
-								spawn.AddIntChild("childStartState", child.StartingState);
+								spawn.AddIntChild(JSONStructure.ParentUIDKey, a.UID);
+								spawn.AddIntChild(JSONStructure.ChildUIDKey, child.UID);
+								spawn.AddIntChild(JSONStructure.XKey, childLoc.X);
+								spawn.AddIntChild(JSONStructure.YKey, childLoc.Y);
+								spawn.AddIntChild(JSONStructure.StartState, child.StartingState);
 
 								JSONArray stateTransitions = new JSONArray();
 								Dictionary<(int, char), int> wiring = child.GetWiring();
 								foreach(KeyValuePair<(int, char), int> transition in wiring)
 								{
 									JSONObject transitionObject = new JSONObject();
-									transitionObject.AddIntChild("from", transition.Key.Item1);
-									transitionObject.AddStringChild("through", transition.Key.Item2.ToString());
-									transitionObject.AddIntChild("to", transition.Value);
+									transitionObject.AddIntChild(JSONStructure.WiringFromKey, transition.Key.Item1);
+									transitionObject.AddStringChild(JSONStructure.WiringThroughKey, transition.Key.Item2.ToString());
+									transitionObject.AddIntChild(JSONStructure.WiringToKey, transition.Value);
 									stateTransitions.AddObjectItem(transitionObject);
 								}
-								spawn.AddArrayChild("childWiring", stateTransitions);
+								spawn.AddArrayChild(JSONStructure.WiringKey, stateTransitions);
 
 								spawns.AddObjectItem(spawn);
 								foreach(FamilyTree f in this.parent.Families)
@@ -148,7 +159,11 @@ namespace EFOP
 					else
 					{
 						Console.WriteLine($"Automaton #{a.UID} died.");
-						deaths.AddIntItem(a.UID);
+						JSONObject deathObj = new JSONObject();
+						deathObj.AddIntChild(JSONStructure.UIDKey, a.UID);
+						deathObj.AddIntChild(JSONStructure.XKey, absoluteOldLocation.X);
+						deathObj.AddIntChild(JSONStructure.YKey, absoluteOldLocation.Y);
+						deaths.AddObjectItem(deathObj);
 					}
 				}
 				else // nem automatáról van szó, adjuk hozzá változatlanul a tmphez
@@ -158,10 +173,10 @@ namespace EFOP
 			}
 
 			JSONObject result = new JSONObject();
-			result.AddObjectChild("movements", finalMovements);
-			result.AddArrayChild("spawns", spawns);
-			result.AddArrayChild("deaths", deaths);
-			result.AddObjectChild("healthUpdates", healthUpdates);
+			result.AddArrayChild(JSONStructure.MovementKey, finalMovements);
+			result.AddArrayChild(JSONStructure.SpawnKey, spawns);
+			result.AddArrayChild(JSONStructure.DeathKey, deaths);
+			result.AddArrayChild(JSONStructure.HealthKey, healthUpdates);
 			return result;
 		}
 		

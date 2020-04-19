@@ -94,23 +94,22 @@ namespace EFOP
 
 		public static string GetChanges(int simID, int round, int chunkX, int chunkY)
 		{
-			string	dir		= Simulation.GetDataDirectory(simID);
+			string	dir		= Simulation.GetDataDirectory(simID),
+					file	= round == 0 ? "initial" : $"round{round}";
 			
 			if(!Directory.Exists(dir))
 			{
 				throw new ArgumentException("No simulation found with given id.");
 			}
 
-			// initial uses "chunkX" and "chunkY" to identify chunks
-			if(round == 0)
+			try
 			{
-				using(StreamReader be = new StreamReader($"{dir}/initial.gcasim"))
+				using(StreamReader be = new StreamReader($"{dir}/{file}.gcasim"))
 				{
 					while(!be.EndOfStream)
 					{
 						string line = be.ReadLine();
 						JSONObject chunk = new JSONObject(line);
-
 						if(chunk.GetIntChild("chunkX") == chunkX && chunk.GetIntChild("chunkY") == chunkY)
 						{
 							return line;
@@ -120,31 +119,9 @@ namespace EFOP
 					throw new ArgumentOutOfRangeException(nameof(chunkX), "No chunk found with provided X/Y values.");
 				}
 			}
-			// rounds use "chunk" to identify chunks
-			else
+			catch(FileNotFoundException ex)
 			{
-				try
-				{
-					using(StreamReader be = new StreamReader($"{dir}/round{round}.gcasim"))
-					{
-						while(!be.EndOfStream)
-						{
-							string line = be.ReadLine();
-							JSONObject chunk = new JSONObject(line);
-							string[] chunkXY = chunk.GetStringChild("chunk").Split(",");
-							if(int.Parse(chunkXY[0]) == chunkX && int.Parse(chunkXY[1]) == chunkY)
-							{
-								return line;
-							}
-						}
-
-						throw new ArgumentOutOfRangeException(nameof(chunkX), "No chunk found with provided X/Y values.");
-					}
-				}
-				catch(FileNotFoundException ex)
-				{
-					throw new ArgumentException("Given round doesn't exist in the given simulation", nameof(round), ex);
-				}
+				throw new ArgumentException("Given round doesn't exist in the given simulation", nameof(round), ex);
 			}
 		}
 		
@@ -183,7 +160,8 @@ namespace EFOP
 				foreach(KeyValuePair<Point, WorldChunk> c in this._chunks)
 				{
 					JSONObject o = c.Value.ComputeRound();
-					o.AddStringChild("chunk", $"{c.Key.X},{c.Key.Y}");
+					o.AddIntChild(JSONStructure.ChunkXKey, c.Key.X);
+					o.AddIntChild(JSONStructure.ChunkYKey, c.Key.Y);
 					roundData.Add(o);
 				}
 				
@@ -320,26 +298,25 @@ namespace EFOP
 						foreach((Point, ICellContent) content in contentList)
 						{
 							JSONObject contentObject = new JSONObject();
-							contentObject.AddIntChild("X", content.Item1.X);
-							contentObject.AddIntChild("Y", content.Item1.Y);
-							contentObject.AddStringChild("Type", content.Item2.CharCode.ToString());
-							contentObject.AddIntChild("UID", content.Item2.UID);
+							contentObject.AddIntChild(JSONStructure.XKey, content.Item1.X);
+							contentObject.AddIntChild(JSONStructure.YKey, content.Item1.Y);
+							contentObject.AddStringChild(JSONStructure.TypeKey, content.Item2.CharCode.ToString());
+							contentObject.AddIntChild(JSONStructure.UIDKey, content.Item2.UID);
 							if(content.Item2.CharCode == 'a')
 							{
 								Automaton a = (Automaton)content.Item2;
-								contentObject.AddIntChild("startState", a.StartingState);
-								contentObject.AddIntChild("health", a.WellBeingPercent);
+								contentObject.AddIntChild(JSONStructure.StartState, a.StartingState);
 								JSONArray stateTransitions = new JSONArray();
 								Dictionary<(int, char), int> wiring = a.GetWiring();
 								foreach(KeyValuePair<(int, char), int> transition in wiring)
 								{
 									JSONObject transitionObject = new JSONObject();
-									transitionObject.AddIntChild("from", transition.Key.Item1);
-									transitionObject.AddStringChild("through", transition.Key.Item2.ToString());
-									transitionObject.AddIntChild("to", transition.Value);
+									transitionObject.AddIntChild(JSONStructure.WiringFromKey, transition.Key.Item1);
+									transitionObject.AddStringChild(JSONStructure.WiringThroughKey, transition.Key.Item2.ToString());
+									transitionObject.AddIntChild(JSONStructure.WiringToKey, transition.Value);
 									stateTransitions.AddObjectItem(transitionObject);
 								}
-								contentObject.AddArrayChild("wiring", stateTransitions);
+								contentObject.AddArrayChild(JSONStructure.WiringKey, stateTransitions);
 							}
 
 							contents.AddObjectItem(contentObject);
@@ -347,9 +324,9 @@ namespace EFOP
 						log.WriteLine($"Added contents to JSON: {contents.Count}");
 
 						JSONObject chunkData = new JSONObject();
-						chunkData.AddIntChild("chunkX", chunk.Key.X);
-						chunkData.AddIntChild("chunkY", chunk.Key.Y);
-						chunkData.AddArrayChild("data", contents);
+						chunkData.AddIntChild(JSONStructure.ChunkXKey, chunk.Key.X);
+						chunkData.AddIntChild(JSONStructure.ChunkYKey, chunk.Key.Y);
+						chunkData.AddArrayChild(JSONStructure.DataKey, contents);
 
 						ki.WriteLine(chunkData.ToString());
 					}

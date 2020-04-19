@@ -25,7 +25,7 @@ namespace WebApplication1.Controllers
                 return $"{{\"simulationID\":\"{s.ID.ToString()}\"}}"; 
             }
 
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
                 return $"{{\"simulationNumber\":\"-1\"}}";
             }
@@ -48,7 +48,7 @@ namespace WebApplication1.Controllers
                 Simulation s = SimulationHandler.StartNew(round);
                 return $"{{\"simulationID\":\"{s.ID.ToString()}\"}}";
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
                 return $"{{\"simulationID\":\"-1\"}}";
             }
