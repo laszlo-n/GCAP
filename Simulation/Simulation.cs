@@ -644,7 +644,7 @@ namespace EFOP
 			public SimConfiguration(Size size)
 			{
 				this.Size					= size;
-				this.InitialAutomatonNumber	= 100;
+				this.InitialAutomatonNumber	= 1000;
 				this.StartingArea			= 400;
 				this.PlacementStrategy		= AutomatonPlacementStrategy.Random;
 				this.StopAtRound			= int.MaxValue;
