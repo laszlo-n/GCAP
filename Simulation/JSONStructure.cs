@@ -15,6 +15,7 @@ namespace EFOP
         public const string SpawnKey = "spawns";
         public const string DeathKey = "deaths";
         public const string HealthKey = "healthUpdates";
+        public const string HealthValueKey = "health";
         public const string ChunkXYKey = "chunk";
         public const string ParentUIDKey = "parentUID";
         public const string ChildUIDKey = "childUID";
