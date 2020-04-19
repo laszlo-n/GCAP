@@ -55,7 +55,7 @@ async function requestRound() {
 	let myJson = await response.json();
 	console.log(myJson);
 
-	await updateChunk2(cellGrid, myJson);
+	await updateChunk3(cellGrid, myJson);
 	// await updateChunk(cellGrid, myJson);
 }
 
@@ -71,12 +71,12 @@ async function loadServerData() {
 	simID = await simID.json();
 	console.log(simID["simulationID"]);
 
-	let response = await fetch("api/GetSimulation?id=" + simID["simulationID"] + "&round=1&x=0&y=0");
+	let response = await fetch("api/GetSimulation?id=" + simID["simulationID"] + "&round=0&x=0&y=0");
 	console.log(response);
 	let myJson = await response.json();
 	console.log(myJson);
 
-	await updateChunk2(cellGrid, myJson);
+	await updateChunk3(cellGrid, myJson);
 	document.getElementById("simPager").style.visibility = "visible";
 }
 
@@ -252,10 +252,10 @@ async function updateChunk3(grid, src) {
 		let objReference = null;
 
 		src.movements.forEach(cell => {
-			objReference = grid.find(elem => elem.uid == cell.uid);
+			objReference = grid.find(elem => elem.uid == cell.UID);
 			objReference.gridRefX = cell.X;
 			objReference.gridRefY = cell.Y;
-		};
+		});
 
 		src.spawns.forEach(cell => {
 			objReference = grid.find(elem => 
@@ -267,7 +267,7 @@ async function updateChunk3(grid, src) {
 			objReference.startState = cell.startState;
 			objReference.wiring = cell.wiring;
 			objReference.health = 50;
-		};
+		});
 
 		src.deaths.forEach(cell => {
 			objReference = grid.find(elem => 
@@ -279,11 +279,15 @@ async function updateChunk3(grid, src) {
 			objReference.startState = -1;
 			objReference.wiring = [];
 			objReference.health = -1;
-		};
+		});
 
 		src.healthUpdates.forEach(cell => {
-			objReference = grid.find(elem => elem.uid == cell.uid);
+			objReference = grid.find(elem => elem.uid == cell.UID);
 			objReference.health = cell.health;
-		};
+		});
 	}
+
+	document.getElementById("simID").setAttribute('onchange', 'requestRound()');
+	document.getElementById("prevButton").setAttribute('onchange', 'prev()');
+	document.getElementById("nextButton").setAttribute('onchange', 'next()');
 }
