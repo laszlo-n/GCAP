@@ -11,6 +11,8 @@ var vpMinCorner = [], vpMaxCorner = [];
 window.onresize = updateSize;
 var previousChunkInfo = [];
 
+var idStorage = [];
+
 var simID = 0;
 
 var simLaunched = false;
@@ -241,6 +243,7 @@ async function updateChunk3(grid, src) {
 			}
 
 			objReference.uid = cell.UID;
+			idStorage.push(cell.UID);
 		});
 	} else {
 		// subsequent statek esetén a movements, spawns, deaths,
@@ -248,14 +251,11 @@ async function updateChunk3(grid, src) {
 
 		let objReference = null;
 
-		src.movements.forEach(cell => {
+		/*src.movements.forEach(cell => {
 			objReference = grid.find(elem => elem.uid == cell.UID);
 
 			let tempReference = grid.find(elem => 
 				elem.gridRefX == cell.X && elem.gridRefY == cell.Y);
-
-			console.log(cell.UID);
-			console.log(tempReference);
 
 			if (tempReference) {
 				tempReference.content = objReference.content;
@@ -264,14 +264,50 @@ async function updateChunk3(grid, src) {
 				tempReference.startState = objReference.startState;
 				tempReference.wiring = objReference.wiring;
 				tempReference.health = objReference.health;
-			}
 
-			objReference.content = "";
-			objReference.uid = -1;
-			objReference.parentID = -1;
-			objReference.startState = -1;
-			objReference.wiring = [];
-			objReference.health = -1;
+				objReference.content = "";
+				objReference.uid = -1;
+				objReference.parentID = -1;
+				objReference.startState = -1;
+				objReference.wiring = [];
+				objReference.health = -1;
+			}
+		});*/
+
+		src.movements.forEach(cell => {
+			//console.log("Attempting to move " + cell.UID + " at (" + cell.X + ", " + cell.Y + ")...");
+			let success = false;
+
+			if (!idStorage.find(e => e == cell.UID)) console.error("Illegal automaton reference detected (UID: " + cell.UID + ")");
+
+			grid.filter(elem => elem.uid == cell.UID).forEach(find => {
+				grid.filter(nextelem => nextelem.gridRefX == cell.X && nextelem.gridRefY == cell.Y)
+					.forEach(next => {
+						/*console.log("Moving " + find.uid + " from (" + find.gridRefX + ", " + find.gridRefY + ") to ("
+							+ next.gridRefX + ", " + next.gridRefY + ")...");*/
+
+						success = true;
+
+						// find: a megtalált hexcell ha létezik
+						// next: az új hexcell amibe mozog, ha létezik
+						next.content = find.content;
+						next.uid = find.uid;
+						next.parentID = find.parentID;
+						next.startState = find.startState;
+						next.wiring = find.wiring;
+						next.health = find.health;
+
+						// az előző értékeit alaphelyzetbe állítjuk
+						find.content = "";
+						find.uid = -1;
+						find.parentID = -1;
+						find.startState = -1;
+						find.wiring = [];
+						find.health = -1;
+					})
+			})
+
+			if (!success) console.error("Moving " + cell.UID + " to (" + cell.X + ", " + cell.Y + ") failed.");
 		});
 
 		src.spawns.forEach(cell => {
@@ -284,6 +320,8 @@ async function updateChunk3(grid, src) {
 			objReference.startState = cell.startState;
 			objReference.wiring = cell.wiring;
 			objReference.health = 50;
+
+			idStorage.push(cell.childUID);
 		});
 
 		src.deaths.forEach(cell => {
@@ -296,11 +334,22 @@ async function updateChunk3(grid, src) {
 			objReference.startState = -1;
 			objReference.wiring = [];
 			objReference.health = -1;
+
+			if (!idStorage.find(e => e == cell.UID)) console.error("Illegal automaton reference detected (UID: " + cell.UID + ")");
+			else idStorage = idStorage.filter(item => item != cell.UID);
 		});
 
 		src.healthUpdates.forEach(cell => {
-			objReference = grid.find(elem => elem.uid == cell.UID);
-			objReference.health = cell.health;
+			let success = false;
+
+			if (!idStorage.find(e => e == cell.UID)) console.error("Illegal automaton reference detected (UID: " + cell.UID + ")");
+
+			grid.filter(elem => elem.uid == cell.UID).forEach(find => {
+				find.health = cell.health;
+				success = true;
+			});
+
+			if (!success) console.error("Updating the health of automaton " + cell.UID + " to " + cell.health + " failed.");
 		});
 	}
 
