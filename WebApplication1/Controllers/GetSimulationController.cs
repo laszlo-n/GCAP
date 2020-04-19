@@ -66,7 +66,7 @@ namespace WebApplication1.Controllers
                 //SimulationArchive simulation = new SimulationArchive(id);
                 //return simulation.GetRoundJSON(round, x, y);
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
                 return "\"message\":\"There is no simulation with this number\"";
             }

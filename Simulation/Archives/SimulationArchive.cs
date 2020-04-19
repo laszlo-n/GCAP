@@ -164,7 +164,7 @@ namespace EFOP.Archives
                                 automatonUIDs[uid] = newCoord;
                                 contents[GetChunkFromPoint(newCoord)][newCoord] = a;
                             }
-                            catch(KeyNotFoundException ex)
+                            catch(KeyNotFoundException)
                             {
                                 // TODO
                             }
