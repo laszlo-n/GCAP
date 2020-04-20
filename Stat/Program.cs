@@ -30,6 +30,8 @@ namespace Stat
                         {
                             FamilyTreeBuilder.LoadTree(int.Parse(command[1]));
                             Console.WriteLine("Szimuláció betöltve");
+                            command = new[] { "automaton", "by-family-size" };
+                            goto case "automaton";
                         }
                         catch(Exception)
                         {
@@ -109,6 +111,55 @@ namespace Stat
                                     foreach((int size, int count) in tmpList)
                                     {
                                         Console.WriteLine($"{size} tagú család: {count} db");
+                                    }
+
+                                    Console.WriteLine("============");
+
+                                    int[] categories = new int[8];
+                                    for(int i = 0; i < categories.Length; i ++)
+                                    {
+                                        categories[i] = 0;
+                                    }
+
+                                    foreach((int size, int count) in tmpList)
+                                    {
+                                        if(size == 1)
+                                        {
+                                            categories[0] += count;
+                                        }
+                                        else if(size == 2)
+                                        {
+                                            categories[1] += count;
+                                        }
+                                        else if(size <= 4)
+                                        {
+                                            categories[2] += count;
+                                        }
+                                        else if(size <= 6)
+                                        {
+                                            categories[3] += count;
+                                        }
+                                        else if(size <= 12)
+                                        {
+                                            categories[4] += count;
+                                        }
+                                        else if(size <= 20)
+                                        {
+                                            categories[5] += count;
+                                        }
+                                        else if(size <= 30)
+                                        {
+                                            categories[6] += count;
+                                        }
+                                        else
+                                        {
+                                            categories[7] += count;
+                                        }
+                                    }
+
+                                    for(int i = 0; i < categories.Length; i ++)
+                                    {
+                                        Console.Write($"{categories[i]}{(i == categories.Length - 1 ? "\n" : "\t" )}");
                                     }
                                     break;
                             }
