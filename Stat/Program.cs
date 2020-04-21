@@ -47,11 +47,41 @@ namespace Stat
                         int id;
                         if(int.TryParse(command[1], out id))
                         {
-                            List<(int, string, int)> wiring = FamilyTreeBuilder.GetWiring(id);
-                            foreach((int from, string through, int to) in wiring)
+                            FamilyTreeItem automaton = FamilyTreeBuilder.GetAutomaton(id);
+
+                            // kezdőállapot
+                            Console.WriteLine($"Kezdőállapot: {automaton.StartState}\n");
+
+                            // bekötés
+                            Console.WriteLine("Bekötés:");
+                            ReadOnlyDictionary<(int, string), int> wiring = automaton.wiring;
+                            foreach(KeyValuePair<(int, string), int> change in wiring)
                             {
-                                Console.WriteLine($"{directions[from]}--{through}-->{directions[to]}");
+                                Console.WriteLine($"{directions[change.Key.Item1]}--{change.Key.Item2}-->{directions[change.Value]}");
                             }
+                            Console.WriteLine();
+
+                            // reakció környezetekre
+                            Console.WriteLine("Reakciók:");
+                            Console.WriteLine($"Üres környezet: {automaton.ComputeResult("uuuuuu")}");
+                            Console.WriteLine($"Fa balra      : {automaton.ComputeResult("tuuuuu")}");
+                            Console.WriteLine($"Fa bal-fent   : {automaton.ComputeResult("utuuuu")}");
+                            Console.WriteLine($"Fa jobb-fent  : {automaton.ComputeResult("uutuuu")}");
+                            Console.WriteLine($"Fa jobbra     : {automaton.ComputeResult("uuutuu")}");
+                            Console.WriteLine($"Fa jobb-lent  : {automaton.ComputeResult("uuuutu")}");
+                            Console.WriteLine($"Fa bal-lent   : {automaton.ComputeResult("uuuuut")}");
+                            Console.WriteLine($"Or. balra      : {automaton.ComputeResult("luuuuu")}");
+                            Console.WriteLine($"Or. bal-fent   : {automaton.ComputeResult("uluuuu")}");
+                            Console.WriteLine($"Or. jobb-fent  : {automaton.ComputeResult("uuluuu")}");
+                            Console.WriteLine($"Or. jobbra     : {automaton.ComputeResult("uuuluu")}");
+                            Console.WriteLine($"Or. jobb-lent  : {automaton.ComputeResult("uuuulu")}");
+                            Console.WriteLine($"Or. bal-lent   : {automaton.ComputeResult("uuuuul")}");
+                            Console.WriteLine($"Aut. balra      : {automaton.ComputeResult("auuuuu")}");
+                            Console.WriteLine($"Aut. bal-fent   : {automaton.ComputeResult("uauuuu")}");
+                            Console.WriteLine($"Aut. jobb-fent  : {automaton.ComputeResult("uuauuu")}");
+                            Console.WriteLine($"Aut. jobbra     : {automaton.ComputeResult("uuuauu")}");
+                            Console.WriteLine($"Aut. jobb-lent  : {automaton.ComputeResult("uuuuau")}");
+                            Console.WriteLine($"Aut. bal-lent   : {automaton.ComputeResult("uuuuua")}");
                         }
                         else
                         {

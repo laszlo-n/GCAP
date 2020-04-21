@@ -19,6 +19,20 @@ namespace Stat
             families = null;
         }
 
+        private static Dictionary<(int, string), int> GetWiring(JSONObject automaton)
+        {
+            var result = new Dictionary<(int, string), int>();
+
+            JSONArray wiringArr = automaton.GetArrayChild("wiring");
+            for(int i = 0; i < wiringArr.Count; i ++)
+            {
+                JSONObject change = (JSONObject)wiringArr[i];
+                result.Add((change.GetIntChild("from"), change.GetStringChild("through")), change.GetIntChild("to"));
+            }
+
+            return result;
+        }
+
         public static List<FamilyTreeItem> LoadTree(int simID)
         {
             List<FamilyTreeItem> results = new List<FamilyTreeItem>();
@@ -38,7 +52,9 @@ namespace Stat
                         if(content.GetStringChild("Type") == "a")
                         {
                             int uid = content.GetIntChild("UID");
-                            FamilyTreeItem item = new FamilyTreeItem(uid);
+                            var wiring = GetWiring(content);
+
+                            FamilyTreeItem item = new FamilyTreeItem(uid, content.GetIntChild("startState") ,wiring);
                             results.Add(item);
                             tmpDic.Add(uid, item);
                         }
@@ -58,7 +74,7 @@ namespace Stat
                         {
                             JSONObject spawn = (JSONObject)spawns[j];
                             int childUID = spawn.GetIntChild("childUID");
-                            FamilyTreeItem child = new FamilyTreeItem(childUID);
+                            FamilyTreeItem child = new FamilyTreeItem(childUID, spawn.GetIntChild("startState"), GetWiring(spawn));
                             tmpDic.Add(childUID, child);
                             tmpDic[spawn.GetIntChild("parentUID")].Children.Add(child);
                         }
@@ -75,6 +91,25 @@ namespace Stat
         }
 
         public static bool IsLoaded { get { return FamilyTreeBuilder.currentSim != -1; } }
+
+        public static FamilyTreeItem GetAutomaton(int id)
+        {
+            if(!IsLoaded)
+            {
+                throw new InvalidOperationException("No simulation is loaded.");
+            }
+
+            for(int i = 0; i < families.Count; i ++)
+            {
+                FamilyTreeItem result = families[i].SearchChild(id);
+                if(result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
 
         public static List<(int from, string through, int to)> GetWiring(int automatonID)
         {
