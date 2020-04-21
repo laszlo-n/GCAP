@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace Stat
@@ -56,8 +57,14 @@ namespace Stat
                                 {
                                     case "image":
                                         Bitmap b = automaton.GenerateImage();
-                                        b.Save("/home/sisisisi/Asztal/asd.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                                        string path = $"{Program.GetSimDir(FamilyTreeBuilder.CurrentSimID)}/img/{command[1]}.png";
+                                        if(!System.IO.Directory.Exists(Path.GetDirectoryName(path)))
+                                        {
+                                            Directory.CreateDirectory(Path.GetDirectoryName(path));
+                                        }
                                         
+                                        b.Save(path, System.Drawing.Imaging.ImageFormat.Png);
+                                        Console.WriteLine($"Kép sikeresen elmentve:\n{path}");
                                         break;
                                 }
                             }

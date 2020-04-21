@@ -177,5 +177,10 @@ namespace Stat
         {
             get { return families; }
         }
+
+        public static int CurrentSimID
+        {
+            get { return currentSim; }
+        }
     }
 }
