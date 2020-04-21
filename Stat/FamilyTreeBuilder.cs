@@ -54,13 +54,16 @@ namespace Stat
                             int uid = content.GetIntChild("UID");
                             var wiring = GetWiring(content);
 
-                            FamilyTreeItem item = new FamilyTreeItem(uid, content.GetIntChild("startState") ,wiring);
+                            FamilyTreeItem item = new FamilyTreeItem(uid, 0, content.GetIntChild("startState") ,wiring);
                             results.Add(item);
                             tmpDic.Add(uid, item);
                         }
                     }
                 }
             }
+
+            // key: UID, val: round of death
+            Dictionary<int, int> deathList = new Dictionary<int, int>();
 
             for(int i = 1; File.Exists($"{dir}/round{i}.gcasim"); i ++)
             {
@@ -74,9 +77,16 @@ namespace Stat
                         {
                             JSONObject spawn = (JSONObject)spawns[j];
                             int childUID = spawn.GetIntChild("childUID");
-                            FamilyTreeItem child = new FamilyTreeItem(childUID, spawn.GetIntChild("startState"), GetWiring(spawn));
+                            FamilyTreeItem child = new FamilyTreeItem(childUID, i, spawn.GetIntChild("startState"), GetWiring(spawn));
                             tmpDic.Add(childUID, child);
                             tmpDic[spawn.GetIntChild("parentUID")].Children.Add(child);
+                        }
+
+                        JSONArray deaths = chunk.GetArrayChild("deaths");
+                        for(int j = 0; j < deaths.Count; j ++)
+                        {
+                            JSONObject death = (JSONObject)deaths[j];
+                            deathList.Add(death.GetIntChild("UID"), i);
                         }
                     }
                 }
@@ -86,8 +96,31 @@ namespace Stat
             
             FamilyTreeBuilder.currentSim = simID;
             FamilyTreeBuilder.families = new ReadOnlyCollection<FamilyTreeItem>(results);
+            SetDeaths(deathList);
 
             return results;
+        }
+
+        private static void SetDeaths(Dictionary<int, int> deathList)
+        {
+            Queue<FamilyTreeItem> q = new Queue<FamilyTreeItem>();
+            for(int i = 0; i < families.Count; i ++)
+            {
+                q.Append(families[i]);
+            }
+            while(q.Count != 0)
+            {
+                FamilyTreeItem current = q.Dequeue();
+                if(deathList.ContainsKey(current.UID))
+                {
+                    current.DeathRound = deathList[current.UID];
+                }
+
+                for(int i = 0; i < current.Children.Count; i ++)
+                {
+                    q.Append(current.Children[i]);
+                }
+            }
         }
 
         public static bool IsLoaded { get { return FamilyTreeBuilder.currentSim != -1; } }

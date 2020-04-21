@@ -19,8 +19,28 @@ namespace Stat
             { 5, "BL" }
         };
 
+        static Action<FamilyTreeItem, int> listWithChildren = null;
+
         static void Main(string[] args)
         {
+            listWithChildren = (item, layer) =>
+            {
+                for(int i = 0; i < layer - 1; i ++)
+                {
+                    Console.Write("| ");
+                }
+                if(layer != 0)
+                {
+                    Console.Write("|-");
+                }
+
+                Console.WriteLine(item.UID);
+                foreach(var child in item.Children)
+                {
+                    listWithChildren(child, layer + 1);
+                }
+            };
+
             while(true)
             {
                 Console.Write("> ");
@@ -65,6 +85,9 @@ namespace Stat
                                         
                                         b.Save(path, System.Drawing.Imaging.ImageFormat.Png);
                                         Console.WriteLine($"Kép sikeresen elmentve:\n{path}");
+                                        break;
+                                    case "list":
+                                        listWithChildren(automaton, 0);
                                         break;
                                 }
                             }
@@ -111,26 +134,6 @@ namespace Stat
                             {
                                 case "list":
                                     ReadOnlyCollection<FamilyTreeItem> families = FamilyTreeBuilder.Families;
-                                    
-                                    Action<FamilyTreeItem, int> listWithChildren = null;
-                                    listWithChildren = (item, layer) =>
-                                    {
-
-                                        for(int i = 0; i < layer - 1; i ++)
-                                        {
-                                            Console.Write("| ");
-                                        }
-                                        if(layer != 0)
-                                        {
-                                            Console.Write("|-");
-                                        }
-
-                                        Console.WriteLine(item.UID);
-                                        foreach(var child in item.Children)
-                                        {
-                                            listWithChildren(child, layer + 1);
-                                        }
-                                    };
 
                                     for(int i = 0; i < families.Count; i ++)
                                     {

@@ -24,13 +24,17 @@ namespace Stat
 
         public int StartState { get; }
 
+        public int SpawnRound { get; }
+        public int DeathRound { get; set; } = -1;
+
         public List<FamilyTreeItem> Children { get; }
 
         public ReadOnlyDictionary<(int, string), int> wiring;
 
-        public FamilyTreeItem(int uid, int startState, Dictionary<(int, string), int> wiring)
+        public FamilyTreeItem(int uid, int spawnRound, int startState, Dictionary<(int, string), int> wiring)
         {
             this.UID        = uid;
+            this.SpawnRound = spawnRound;
             this.StartState = startState;
             this.Children   = new List<FamilyTreeItem>();
             this.wiring     = new ReadOnlyDictionary<(int, string), int>(wiring);
