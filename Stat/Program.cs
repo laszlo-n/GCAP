@@ -95,6 +95,8 @@ namespace Stat
                             {
                                 // kezdőállapot
                                 Console.WriteLine($"Kezdőállapot: {automaton.StartState}\n");
+                                Console.WriteLine($"Születés: {automaton.SpawnRound}. kör");
+                                Console.WriteLine($"Halál: {(automaton.DeathRound == -1 ? "-" : automaton.DeathRound.ToString() + ". kör")}\n");
 
                                 // bekötés
                                 Console.WriteLine("Bekötés:");

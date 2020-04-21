@@ -33,7 +33,7 @@ namespace Stat
             return result;
         }
 
-        public static List<FamilyTreeItem> LoadTree(int simID)
+        public static List<FamilyTreeItem> LoadTree(int simID, int maxRound = int.MaxValue)
         {
             List<FamilyTreeItem> results = new List<FamilyTreeItem>();
             Dictionary<int, FamilyTreeItem> tmpDic = new Dictionary<int, FamilyTreeItem>();
@@ -65,7 +65,7 @@ namespace Stat
             // key: UID, val: round of death
             Dictionary<int, int> deathList = new Dictionary<int, int>();
 
-            for(int i = 1; File.Exists($"{dir}/round{i}.gcasim"); i ++)
+            for(int i = 1; File.Exists($"{dir}/round{i}.gcasim") && i <= maxRound; i ++)
             {
                 using(StreamReader be = new StreamReader($"{dir}/round{i}.gcasim"))
                 {
