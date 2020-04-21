@@ -61,6 +61,7 @@ namespace Stat
                     }
                 }
             }
+            RoundCount = 0;
 
             // key: UID, val: round of death
             Dictionary<int, int> deathList = new Dictionary<int, int>();
@@ -90,6 +91,7 @@ namespace Stat
                         }
                     }
                 }
+                RoundCount ++;
             }
 
             results = results.OrderByDescending(e => e.RecursiveCount).ToList();
@@ -214,6 +216,11 @@ namespace Stat
         public static int CurrentSimID
         {
             get { return currentSim; }
+        }
+
+        public static int RoundCount
+        {
+            get; private set;
         }
     }
 }
