@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 
 namespace Stat
 {
@@ -65,6 +66,39 @@ namespace Stat
             }
 
             return null;
+        }
+
+        public Bitmap GenerateImage()
+        {
+            float heightPercent = 1 - (float)System.Math.Sqrt(0.75);
+            float side = 400;
+            float extra = heightPercent * side;
+
+            Bitmap result = new Bitmap(1000, 1000);
+            using(Graphics g = Graphics.FromImage(result))
+            using(Pen blackPen = new Pen(Brushes.Black, 1))
+            {
+                // whiten image
+                g.FillRectangle(Brushes.White, 0, 0, 1000, 1000);
+
+                // draw circles and fill starting state
+                float[] xs = { 0,   200, 600, 800, 600, 200 };
+                float[] ys = { 400, 0 + extra, 0 + extra, 400, 800 - extra, 800 - extra };
+
+                for(int i = 0; i < xs.Length; i ++)
+                {
+                    g.DrawArc(blackPen, xs[i], ys[i], 200, 200, 0, 360);
+                }
+                g.FillEllipse(Brushes.Black, xs[this.StartState], ys[this.StartState], 200, 200);
+
+                // draw state changes
+                foreach(KeyValuePair<(int, string), int> change in this.wiring)
+                {
+                    g.DrawLine(blackPen, xs[change.Key.Item1] + 100, ys[change.Key.Item1] + 100, xs[change.Value] + 100, ys[change.Value] + 100);
+                }
+            }
+
+            return result;
         }
     }
 }
