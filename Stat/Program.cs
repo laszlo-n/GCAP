@@ -212,7 +212,7 @@ namespace Stat
 
                         break;
                     default:
-                        Console.WriteLine("Imseretlen parancs");
+                        Console.WriteLine("Ismeretlen parancs");
                         break;
                 }
             }

@@ -1,11 +1,25 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+
+using static System.Math;
 
 namespace Stat
 {
     class FamilyTreeItem
     {
+        private readonly ReadOnlyDictionary<(int, int), int> angles = new ReadOnlyDictionary<(int, int), int>(
+        new Dictionary<(int, int), int>()
+        {
+            {(0, 1), 210}, {(0, 2), 240}, {(0, 3), 270}, {(0, 4), 300}, {(0, 5), 330},
+            {(1, 0), 30}, {(1, 2), 270}, {(1, 3), 300}, {(1, 4), 330}, {(1, 5), 0},
+            {(2, 0), 60}, {(2, 1), 90}, {(2, 3), 330}, {(2, 4), 0}, {(2, 5), 30},
+            {(3, 0), 90}, {(3, 1), 120}, {(3, 2), 150}, {(3, 4), 30}, {(3, 5), 60},
+            {(4, 0), 120}, {(4, 1), 150}, {(4, 2), 180}, {(4, 3), 210}, {(4, 5), 90},
+            {(5, 0), 150}, {(5, 1), 180}, {(5, 2), 210}, {(5, 3), 240}, {(5, 4), 270}
+        });
+
         public int UID { get; }
 
         public int StartState { get; }
@@ -70,7 +84,7 @@ namespace Stat
 
         public Bitmap GenerateImage()
         {
-            float heightPercent = 1 - (float)System.Math.Sqrt(0.75);
+            float heightPercent = 1 - (float)Sqrt(0.75);
             float side = 400;
             float extra = heightPercent * side;
 
@@ -91,10 +105,24 @@ namespace Stat
                 }
                 g.FillEllipse(Brushes.Black, xs[this.StartState], ys[this.StartState], 200, 200);
 
+                Func<float, float> ToRad = (float deg) =>
+                {
+                    return (float)(PI / 180 * deg);
+                };
+
                 // draw state changes
                 foreach(KeyValuePair<(int, string), int> change in this.wiring)
                 {
-                    g.DrawLine(blackPen, xs[change.Key.Item1] + 100, ys[change.Key.Item1] + 100, xs[change.Value] + 100, ys[change.Value] + 100);
+                    if(change.Key.Item1 != change.Value)
+                    {
+                        float   xstart = xs[change.Key.Item1] + 100 - 100 * (float)Sin(ToRad(angles[(change.Key.Item1, change.Value)])),
+                                ystart = ys[change.Key.Item1] + 100 + 100 * (float)Cos(ToRad(angles[(change.Key.Item1, change.Value)])),
+                                xend   = xs[change.Value]     + 100 - 100 * (float)Sin(ToRad(angles[(change.Value, change.Key.Item1)])),
+                                yend   = ys[change.Value]     + 100 + 100 * (float)Cos(ToRad(angles[(change.Value, change.Key.Item1)]));
+                        g.DrawLine(blackPen, xstart, ystart, xend, yend);
+
+                        g.FillRectangle(Brushes.Black, xend - 10, yend - 10, 20, 20);
+                    }
                 }
             }
 
