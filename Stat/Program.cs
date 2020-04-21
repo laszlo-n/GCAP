@@ -293,10 +293,13 @@ namespace Stat
                                     foreach (var name in simnames200) Console.Write($"\t{name}");
                                     Console.WriteLine();
 
-                                    for (var i = 0; i < 200; i++)
+                                    for (var round = 0; round < 200; round++)
                                     {
-                                        Console.Write($"{i + 1}. kör");
-                                        foreach (var avg in simavgs200) Console.Write($"\t{avg.ToString()}");
+                                        Console.Write($"{round + 1}. kör");
+                                        foreach (var simavg in simavgs200)
+                                        {
+                                            Console.Write($"\t{simavg[round]}");
+                                        }
                                         Console.WriteLine();
                                     }
 
@@ -309,10 +312,13 @@ namespace Stat
                                     foreach (var name in simnames200) Console.Write($"\t{name}");
                                     Console.WriteLine();
 
-                                    for (var i = 0; i < 200; i++)
+                                    for (var round = 0; round < 200; round++)
                                     {
-                                        Console.Write($"{i + 1}. kör");
-                                        foreach (var top in simtops200) Console.Write($"\t{top.ToString()}");
+                                        Console.Write($"{round + 1}. kör");
+                                        foreach (var simtop in simtops200)
+                                        {
+                                            Console.Write($"\t{simtop[round]}");
+                                        }
                                         Console.WriteLine();
                                     }
                                 }
@@ -328,10 +334,13 @@ namespace Stat
                                     foreach (var name in simnames500) Console.Write($"\t{name}");
                                     Console.WriteLine();
 
-                                    for (var i = 0; i < 200; i++)
+                                    for (var round = 0; round < 500; round++)
                                     {
-                                        Console.Write($"{i + 1}. kör");
-                                        foreach (var avg in simavgs500) Console.Write($"\t{avg}");
+                                        Console.Write($"{round + 1}. kör");
+                                        foreach (var simavg in simavgs500)
+                                        {
+                                            Console.Write($"\t{simavg[round]}");
+                                        }
                                         Console.WriteLine();
                                     }
 
@@ -344,10 +353,13 @@ namespace Stat
                                     foreach (var name in simnames500) Console.Write($"\t{name}");
                                     Console.WriteLine();
 
-                                    for (var i = 0; i < 200; i++)
+                                    for (var round = 0; round < 500; round++)
                                     {
-                                        Console.Write($"{i + 1}. kör");
-                                        foreach (var top in simtops500) Console.Write($"\t{top.ToString()}");
+                                        Console.Write($"{round + 1}. kör");
+                                        foreach (var simtop in simtops500)
+                                        {
+                                            Console.Write($"\t{simtop[round]}");
+                                        }
                                         Console.WriteLine();
                                     }
                                 }
