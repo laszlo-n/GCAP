@@ -10,6 +10,7 @@ WebApplication1/*.txt
 Stat/doc/*
 Stat/bin/*
 Stat/.vscode/*
+Stat/Stat.csproj
 
 # NuGet Packages
 *.nupkg
