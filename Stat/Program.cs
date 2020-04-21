@@ -284,66 +284,72 @@ namespace Stat
                                     }
                                 }
 
-                                Console.WriteLine("200-as körszámú szimulációk utódstatisztikái (átlagok):\n");
-
-                                // header
-                                Console.Write("Kör");
-                                foreach (var name in simnames200) Console.Write($"\t{name}");
-                                Console.WriteLine();
-
-                                for (var i = 0; i < 200; i++)
+                                if (simnames200.Count != 0)
                                 {
-                                    Console.Write($"{i + 1}. kör");
-                                    foreach (var avg in simavgs500) Console.Write($"\t{avg}");
+                                    Console.WriteLine("200-as körszámú szimulációk utódstatisztikái (átlagok):\n");
+
+                                    // header
+                                    Console.Write("Kör");
+                                    foreach (var name in simnames200) Console.Write($"\t{name}");
                                     Console.WriteLine();
+
+                                    for (var i = 0; i < 200; i++)
+                                    {
+                                        Console.Write($"{i + 1}. kör");
+                                        foreach (var avg in simavgs200) Console.Write($"\t{avg.ToString()}");
+                                        Console.WriteLine();
+                                    }
+
+                                    Console.WriteLine();
+
+                                    Console.WriteLine("200-as körszámú szimulációk utódstatisztikái (maximumok):\n");
+
+                                    // header
+                                    Console.Write("Kör");
+                                    foreach (var name in simnames200) Console.Write($"\t{name}");
+                                    Console.WriteLine();
+
+                                    for (var i = 0; i < 200; i++)
+                                    {
+                                        Console.Write($"{i + 1}. kör");
+                                        foreach (var top in simtops200) Console.Write($"\t{top.ToString()}");
+                                        Console.WriteLine();
+                                    }
                                 }
 
                                 Console.WriteLine();
 
-                                Console.WriteLine("200-as körszámú szimulációk utódstatisztikái (maximumok):\n");
-
-                                // header
-                                Console.Write("Kör");
-                                foreach (var name in simnames200) Console.Write($"\t{name}");
-                                Console.WriteLine();
-
-                                for (var i = 0; i < 200; i++)
+                                if (simnames500.Count != 0)
                                 {
-                                    Console.Write($"{i + 1}. kör");
-                                    foreach (var avg in simavgs500) Console.Write($"\t{avg}");
+                                    Console.WriteLine("500-as körszámú szimulációk utódstatisztikái (átlagok):\n");
+
+                                    // header
+                                    Console.Write("Kör");
+                                    foreach (var name in simnames500) Console.Write($"\t{name}");
                                     Console.WriteLine();
-                                }
 
-                                Console.WriteLine();
+                                    for (var i = 0; i < 200; i++)
+                                    {
+                                        Console.Write($"{i + 1}. kör");
+                                        foreach (var avg in simavgs500) Console.Write($"\t{avg}");
+                                        Console.WriteLine();
+                                    }
 
-                                Console.WriteLine("500-as körszámú szimulációk utódstatisztikái (átlagok):\n");
-
-                                // header
-                                Console.Write("Kör");
-                                foreach (var name in simnames200) Console.Write($"\t{name}");
-                                Console.WriteLine();
-
-                                for (var i = 0; i < 200; i++)
-                                {
-                                    Console.Write($"{i + 1}. kör");
-                                    foreach (var avg in simavgs500) Console.Write($"\t{avg}");
                                     Console.WriteLine();
-                                }
 
-                                Console.WriteLine();
+                                    Console.WriteLine("500-as körszámú szimulációk utódstatisztikái (maximumok):\n");
 
-                                Console.WriteLine("500-as körszámú szimulációk utódstatisztikái (maximumok):\n");
-
-                                // header
-                                Console.Write("Kör");
-                                foreach (var name in simnames200) Console.Write($"\t{name}");
-                                Console.WriteLine();
-
-                                for (var i = 0; i < 200; i++)
-                                {
-                                    Console.Write($"{i + 1}. kör");
-                                    foreach (var avg in simavgs500) Console.Write($"\t{avg}");
+                                    // header
+                                    Console.Write("Kör");
+                                    foreach (var name in simnames500) Console.Write($"\t{name}");
                                     Console.WriteLine();
+
+                                    for (var i = 0; i < 200; i++)
+                                    {
+                                        Console.Write($"{i + 1}. kör");
+                                        foreach (var top in simtops500) Console.Write($"\t{top.ToString()}");
+                                        Console.WriteLine();
+                                    }
                                 }
                                 break;
                         }
