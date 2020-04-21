@@ -223,6 +223,131 @@ namespace Stat
                         }
 
                         break;
+                    case "explore":
+                        switch (command[1])
+                        {
+                            case "generations":
+                                var simavgs200 = new List<List<double>>();
+                                var simtops200 = new List<List<int>>();
+                                var simnames200 = new List<string>();
+
+                                var simavgs500 = new List<List<double>>();
+                                var simtops500 = new List<List<int>>();
+                                var simnames500 = new List<string>();
+
+                                foreach (var simdir in GetSimDirs())
+                                {
+                                    var avglist = new List<double>();
+                                    var toplist = new List<int>();
+
+                                    var referredDirName = GetSimDirNames().Where(i => simdir.Contains(i)).FirstOrDefault();
+
+                                    FamilyTreeBuilder.LoadTree(int.Parse(referredDirName.Substring(4)));
+                                    for (var i = 1; i < FamilyTreeBuilder.RoundCount; i++)
+                                    {
+                                        FamilyTreeBuilder.LoadTree(int.Parse(referredDirName.Substring(4)), i);
+
+                                        Dictionary<int, int> familyCounts = new Dictionary<int, int>();
+                                        for (int j = 0; j < FamilyTreeBuilder.Families.Count; j++)
+                                        {
+                                            int count = FamilyTreeBuilder.Families[j].RecursiveCount;
+                                            if (familyCounts.ContainsKey(count)) familyCounts[count]++;
+                                            else familyCounts.Add(count, 1);
+                                        }
+
+                                        List<(int, int)> tmpList = new List<(int, int)>();
+                                        foreach (KeyValuePair<int, int> element in familyCounts)
+                                            tmpList.Add((element.Key, element.Value));
+
+                                        //tmpList = tmpList.OrderByDescending(e => e.Item1).ToList();
+
+                                        avglist.Add(tmpList.Average(e => e.Item1));
+                                        toplist.Add(tmpList.Max(e => e.Item1));
+
+                                        FamilyTreeBuilder.Unload();
+                                    }
+                                    FamilyTreeBuilder.Unload();
+
+                                    FamilyTreeBuilder.LoadTree(int.Parse(referredDirName.Substring(4)));
+
+                                    if (FamilyTreeBuilder.RoundCount == 200)
+                                    {
+                                        simavgs200.Add(avglist);
+                                        simtops200.Add(toplist);
+                                        simnames200.Add(referredDirName);
+                                    }
+                                    else if (FamilyTreeBuilder.RoundCount == 500)
+                                    {
+                                        simavgs500.Add(avglist);
+                                        simtops500.Add(toplist);
+                                        simnames500.Add(referredDirName);
+                                    }
+                                }
+
+                                Console.WriteLine("200-as körszámú szimulációk utódstatisztikái (átlagok):\n");
+
+                                // header
+                                Console.Write("Kör");
+                                foreach (var name in simnames200) Console.Write($"\t{name}");
+                                Console.WriteLine();
+
+                                for (var i = 0; i < 200; i++)
+                                {
+                                    Console.Write($"{i + 1}. kör");
+                                    foreach (var avg in simavgs500) Console.Write($"\t{avg}");
+                                    Console.WriteLine();
+                                }
+
+                                Console.WriteLine();
+
+                                Console.WriteLine("200-as körszámú szimulációk utódstatisztikái (maximumok):\n");
+
+                                // header
+                                Console.Write("Kör");
+                                foreach (var name in simnames200) Console.Write($"\t{name}");
+                                Console.WriteLine();
+
+                                for (var i = 0; i < 200; i++)
+                                {
+                                    Console.Write($"{i + 1}. kör");
+                                    foreach (var avg in simavgs500) Console.Write($"\t{avg}");
+                                    Console.WriteLine();
+                                }
+
+                                Console.WriteLine();
+
+                                Console.WriteLine("500-as körszámú szimulációk utódstatisztikái (átlagok):\n");
+
+                                // header
+                                Console.Write("Kör");
+                                foreach (var name in simnames200) Console.Write($"\t{name}");
+                                Console.WriteLine();
+
+                                for (var i = 0; i < 200; i++)
+                                {
+                                    Console.Write($"{i + 1}. kör");
+                                    foreach (var avg in simavgs500) Console.Write($"\t{avg}");
+                                    Console.WriteLine();
+                                }
+
+                                Console.WriteLine();
+
+                                Console.WriteLine("500-as körszámú szimulációk utódstatisztikái (maximumok):\n");
+
+                                // header
+                                Console.Write("Kör");
+                                foreach (var name in simnames200) Console.Write($"\t{name}");
+                                Console.WriteLine();
+
+                                for (var i = 0; i < 200; i++)
+                                {
+                                    Console.Write($"{i + 1}. kör");
+                                    foreach (var avg in simavgs500) Console.Write($"\t{avg}");
+                                    Console.WriteLine();
+                                }
+                                break;
+                        }
+                        break;
                     default:
                         Console.WriteLine("Ismeretlen parancs");
                         break;
@@ -233,6 +358,17 @@ namespace Stat
         public static string GetSimDir(int uid)
         {
             return $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GCAP/sim_{uid}";
+        }
+
+        public static string[] GetSimDirs()
+        {
+            return Directory.GetDirectories($"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GCAP/");
+        }
+
+        public static string[] GetSimDirNames()
+        {
+            var dirinfo = new DirectoryInfo($"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GCAP/");
+            return dirinfo.GetDirectories("*").Select(d => d.Name).ToArray();
         }
     }
 }
