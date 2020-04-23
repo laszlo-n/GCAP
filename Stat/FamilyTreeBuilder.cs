@@ -33,7 +33,7 @@ namespace Stat
             return result;
         }
 
-        public static List<FamilyTreeItem> LoadTree(int simID, int maxRound = int.MaxValue)
+        public static List<FamilyTreeItem> LoadTree(int simID, int maxRound = int.MaxValue, bool order = true)
         {
             List<FamilyTreeItem> results = new List<FamilyTreeItem>();
             Dictionary<int, FamilyTreeItem> tmpDic = new Dictionary<int, FamilyTreeItem>();
@@ -94,7 +94,10 @@ namespace Stat
                 RoundCount ++;
             }
 
-            results = results.OrderByDescending(e => e.RecursiveCount).ToList();
+            if(order)
+            {
+                results = results.OrderByDescending(e => e.RecursiveCount).ToList();
+            }
             
             FamilyTreeBuilder.currentSim = simID;
             FamilyTreeBuilder.families = new ReadOnlyCollection<FamilyTreeItem>(results);
@@ -108,7 +111,7 @@ namespace Stat
             Queue<FamilyTreeItem> q = new Queue<FamilyTreeItem>();
             for(int i = 0; i < families.Count; i ++)
             {
-                q.Append(families[i]);
+                q.Enqueue(families[i]);
             }
             while(q.Count != 0)
             {
@@ -120,7 +123,7 @@ namespace Stat
 
                 for(int i = 0; i < current.Children.Count; i ++)
                 {
-                    q.Append(current.Children[i]);
+                    q.Enqueue(current.Children[i]);
                 }
             }
         }
