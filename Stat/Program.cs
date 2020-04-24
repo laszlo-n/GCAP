@@ -57,7 +57,7 @@ namespace Stat
                             else if(command[2] == "noorder")
                                 FamilyTreeBuilder.LoadTree(int.Parse(command[1]), int.MaxValue, false);
                             sw.Stop();
-                            Console.WriteLine($"Szimuláció betöltve, {sw.ElapsedMilliseconds}ms");
+                            Console.WriteLine($"Szimuláció betöltve, {sw.ElapsedMilliseconds} ms\n");
                             command = new[] { "automaton", "by-family-size" };
                             goto case "automaton";
                         }
@@ -212,95 +212,15 @@ namespace Stat
                                 case "list":
                                     ReadOnlyCollection<FamilyTreeItem> families = FamilyTreeBuilder.Families;
 
-                                    for(int i = 0; i < families.Count; i ++)
-                                    {
-                                        listWithChildren(families[i], 0);
-                                    }
+                                    for(int i = 0; i < families.Count; i ++) listWithChildren(families[i], 0);
+
                                     break;
+
                                 case "by-family-size":
-                                    Dictionary<int, int> familyCounts = new Dictionary<int, int>();
-                                    for(int i = 0; i < FamilyTreeBuilder.Families.Count; i ++)
-                                    {
-                                        int count = FamilyTreeBuilder.Families[i].RecursiveCount;
-                                        if(familyCounts.ContainsKey(count))
-                                        {
-                                            familyCounts[count] ++;
-                                        }
-                                        else
-                                        {
-                                            familyCounts.Add(count, 1);
-                                        }
-                                    }
-
-                                    List<(int, int)> tmpList = new List<(int, int)>();
-                                    foreach(KeyValuePair<int, int> element in familyCounts)
-                                    {
-                                        tmpList.Add((element.Key, element.Value));
-                                    }
-
-                                    tmpList = tmpList.OrderByDescending(e => e.Item1).ToList();
-
-                                    foreach((int size, int count) in tmpList)
-                                    {
-                                        Console.WriteLine($"{size} tagú család: {count} db");
-                                    }
-
-                                    Console.WriteLine("============");
-
-                                    int[] categories = new int[10];
-                                    for(int i = 0; i < categories.Length; i ++)
-                                    {
-                                        categories[i] = 0;
-                                    }
-
-                                    foreach((int size, int count) in tmpList)
-                                    {
-                                        if(size == 1)
-                                        {
-                                            categories[0] += count;
-                                        }
-                                        else if(size == 2)
-                                        {
-                                            categories[1] += count;
-                                        }
-                                        else if(size <= 4)
-                                        {
-                                            categories[2] += count;
-                                        }
-                                        else if(size <= 6)
-                                        {
-                                            categories[3] += count;
-                                        }
-                                        else if(size <= 12)
-                                        {
-                                            categories[4] += count;
-                                        }
-                                        else if(size <= 20)
-                                        {
-                                            categories[5] += count;
-                                        }
-                                        else if(size <= 30)
-                                        {
-                                            categories[6] += count;
-                                        }
-                                        else if (size <= 50)
-                                        {
-                                            categories[7] += count;
-                                        }
-                                        else if (size <= 100)
-                                        {
-                                            categories[8] += count;
-                                        }
-                                        else
-                                        {
-                                            categories[9] += count;
-                                        }
-                                    }
-
-                                    for(int i = 0; i < categories.Length; i ++)
-                                    {
-                                        Console.Write($"{categories[i]}{(i == categories.Length - 1 ? "\n" : "\t" )}");
-                                    }
+                                    var stats = AnalyzeSim();
+                                    Console.Write(stats[0]);
+                                    Console.WriteLine("--------------------------------");
+                                    Console.Write(stats[1]);
                                     break;
                             }
                         }
@@ -309,6 +229,34 @@ namespace Stat
                     case "explore":
                         switch (command[1])
                         {
+                            case "simulations":
+                                var simlist = File.ReadAllLines($"in_simlist.txt");
+                                var sw = new System.Diagnostics.Stopwatch();
+
+                                using (var details = new StreamWriter($"out_details.txt", false, System.Text.Encoding.UTF8))
+                                using (var summary = new StreamWriter($"out_summary.txt", false, System.Text.Encoding.UTF8))
+                                {
+                                    foreach (var sim in simlist)
+                                    {
+                                        Console.WriteLine($"A(z) {sim} számú szimuláció feldolgozása...");
+                                        sw = System.Diagnostics.Stopwatch.StartNew();
+
+                                        FamilyTreeBuilder.LoadTree(int.Parse(sim));
+                                        var stats = AnalyzeSim();
+
+                                        details.WriteLine($"A(z) {sim} számú szimuláció adatai:");
+                                        details.WriteLine();
+                                        details.WriteLine(stats[0]);
+                                        details.Flush();
+
+                                        summary.Write(stats[1]);
+                                        summary.Flush();
+
+                                        sw.Stop();
+                                        Console.WriteLine($"A(z) {sim} számú szimuláció feldolgozása sikeres. Eltelt idő: {sw.ElapsedMilliseconds / 1000} mp.");
+                                    }
+                                }
+                                break;
                             case "generations":
                                 var simavgs200 = new List<List<double>>();
                                 var simtops200 = new List<List<int>>();
@@ -467,6 +415,80 @@ namespace Stat
         {
             var dirinfo = new DirectoryInfo($"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/GCAP/");
             return dirinfo.GetDirectories("*").Select(d => d.Name).ToArray();
+        }
+
+        public static string[] AnalyzeSim()
+        {
+            var details = new StringWriter();
+            var summary = new StringWriter();
+
+            Dictionary<int, int> familyCounts = new Dictionary<int, int>();
+            for (int i = 0; i < FamilyTreeBuilder.Families.Count; i++)
+            {
+                int count = FamilyTreeBuilder.Families[i].RecursiveCount;
+                if (familyCounts.ContainsKey(count)) familyCounts[count]++;
+                else familyCounts.Add(count, 1);
+            }
+
+            List<(int, int)> tmpList = new List<(int, int)>();
+            foreach (KeyValuePair<int, int> element in familyCounts)
+            {
+                tmpList.Add((element.Key, element.Value));
+            }
+
+            tmpList = tmpList.OrderByDescending(e => e.Item1).ToList();
+
+            foreach ((int size, int count) in tmpList) details.WriteLine($"{size} tagú család: {count} db");
+
+            int[] categories = new int[10];
+
+            foreach ((int size, int count) in tmpList)
+            {
+                if (size == 1)
+                {
+                    categories[0] += count;
+                }
+                else if (size == 2)
+                {
+                    categories[1] += count;
+                }
+                else if (size <= 4)
+                {
+                    categories[2] += count;
+                }
+                else if (size <= 6)
+                {
+                    categories[3] += count;
+                }
+                else if (size <= 12)
+                {
+                    categories[4] += count;
+                }
+                else if (size <= 20)
+                {
+                    categories[5] += count;
+                }
+                else if (size <= 30)
+                {
+                    categories[6] += count;
+                }
+                else if (size <= 50)
+                {
+                    categories[7] += count;
+                }
+                else if (size <= 100)
+                {
+                    categories[8] += count;
+                }
+                else
+                {
+                    categories[9] += count;
+                }
+            }
+
+            for (int i = 0; i < categories.Length; i++) summary.Write($"{categories[i]}{(i == categories.Length - 1 ? "\n" : "\t")}");
+
+            return new string[] { details.ToString(), summary.ToString() };
         }
     }
 }
