@@ -172,7 +172,7 @@ namespace Stat
 
                                     Console.WriteLine("============");
 
-                                    int[] categories = new int[8];
+                                    int[] categories = new int[10];
                                     for(int i = 0; i < categories.Length; i ++)
                                     {
                                         categories[i] = 0;
@@ -208,9 +208,17 @@ namespace Stat
                                         {
                                             categories[6] += count;
                                         }
-                                        else
+                                        else if (size <= 50)
                                         {
                                             categories[7] += count;
+                                        }
+                                        else if (size <= 100)
+                                        {
+                                            categories[8] += count;
+                                        }
+                                        else
+                                        {
+                                            categories[9] += count;
                                         }
                                     }
 
@@ -243,7 +251,9 @@ namespace Stat
                                     var referredDirName = GetSimDirNames().Where(i => simdir.Contains(i)).FirstOrDefault();
 
                                     FamilyTreeBuilder.LoadTree(int.Parse(referredDirName.Substring(4)));
-                                    for (var i = 1; i < FamilyTreeBuilder.RoundCount; i++)
+                                    var limit = FamilyTreeBuilder.RoundCount;
+
+                                    for (var i = 0; i < limit; i++)
                                     {
                                         FamilyTreeBuilder.LoadTree(int.Parse(referredDirName.Substring(4)), i);
 
@@ -263,20 +273,15 @@ namespace Stat
 
                                         avglist.Add(tmpList.Average(e => e.Item1));
                                         toplist.Add(tmpList.Max(e => e.Item1));
-
-                                        FamilyTreeBuilder.Unload();
                                     }
-                                    FamilyTreeBuilder.Unload();
 
-                                    FamilyTreeBuilder.LoadTree(int.Parse(referredDirName.Substring(4)));
-
-                                    if (FamilyTreeBuilder.RoundCount == 200)
+                                    if (limit == 200)
                                     {
                                         simavgs200.Add(avglist);
                                         simtops200.Add(toplist);
                                         simnames200.Add(referredDirName);
                                     }
-                                    else if (FamilyTreeBuilder.RoundCount == 500)
+                                    else if (limit == 500)
                                     {
                                         simavgs500.Add(avglist);
                                         simtops500.Add(toplist);
