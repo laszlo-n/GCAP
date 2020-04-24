@@ -50,8 +50,14 @@ namespace Stat
                     case "load":
                         try
                         {
-                            FamilyTreeBuilder.LoadTree(int.Parse(command[1]));
-                            Console.WriteLine("Szimuláció betöltve");
+                            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                            sw.Start();
+                            if(command.Length == 2)
+                                FamilyTreeBuilder.LoadTree(int.Parse(command[1]));
+                            else if(command[2] == "noorder")
+                                FamilyTreeBuilder.LoadTree(int.Parse(command[1]), int.MaxValue, false);
+                            sw.Stop();
+                            Console.WriteLine($"Szimuláció betöltve, {sw.ElapsedMilliseconds}ms");
                             command = new[] { "automaton", "by-family-size" };
                             goto case "automaton";
                         }
@@ -65,6 +71,75 @@ namespace Stat
                         break;
                     case "exit":
                         return;
+                    case "alldeath":
+                        List<int> ids = new List<int>();
+                        using(StreamReader be = new StreamReader("/home/sisisisi/Asztal/in.txt"))
+                        {
+                            while(!be.EndOfStream)
+                            {
+                                ids.Add(int.Parse(be.ReadLine()));
+                            }
+                        }
+
+                        using(StreamWriter ki = new StreamWriter("/home/sisisisi/Asztal/out.txt"))
+                        {
+                            for(int i = 0; i < ids.Count; i ++)
+                            {
+                                FamilyTreeBuilder.LoadTree(ids[i]);
+                                Console.WriteLine($"Betöltve: {i + 1}, {ids[i]}");
+                                Queue<FamilyTreeItem> qu = new Queue<FamilyTreeItem>();
+                                int al = 0, dd = 0;
+
+                                for(int j = 0; j < FamilyTreeBuilder.Families.Count; j ++)
+                                {
+                                    qu.Enqueue(FamilyTreeBuilder.Families[j]);
+                                }
+
+                                while(qu.Count != 0)
+                                {
+                                    FamilyTreeItem automaton = qu.Dequeue();
+                                    if(automaton.DeathRound == -1)
+                                        al ++;
+                                    else
+                                        dd ++;
+
+                                    for(int j = 0; j < automaton.Children.Count; j ++)
+                                    {
+                                        qu.Enqueue(automaton.Children[j]);
+                                    }
+                                }
+
+                                ki.WriteLine($"{ids[i]}\t{al}\t{dd}");
+                                Console.WriteLine($"Kész: {i + 1}");
+                            }
+                        }
+                        break;
+                    case "death":
+                        Queue<FamilyTreeItem> q = new Queue<FamilyTreeItem>();
+                        int alive = 0, dead = 0;
+
+                        for(int i = 0; i < FamilyTreeBuilder.Families.Count; i ++)
+                        {
+                            q.Enqueue(FamilyTreeBuilder.Families[i]);
+                        }
+
+                        while(q.Count != 0)
+                        {
+                            FamilyTreeItem automaton = q.Dequeue();
+                            if(automaton.DeathRound == -1)
+                                alive ++;
+                            else
+                                dead ++;
+
+                            for(int i = 0; i < automaton.Children.Count; i ++)
+                            {
+                                q.Enqueue(automaton.Children[i]);
+                            }
+                        }
+
+                        Console.WriteLine($"Él: {alive}\nHalott: {dead}");
+
+                        break;
                     case "automaton":
                         int id;
                         if(int.TryParse(command[1], out id))
