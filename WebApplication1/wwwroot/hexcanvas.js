@@ -10,6 +10,7 @@ var currentlyHighlighted = null;
 var vpMinCorner = [], vpMaxCorner = [];
 window.onresize = updateSize;
 var previousChunkInfo = [];
+var traditionalArrangement = false;
 
 var idStorage = [];
 
@@ -146,10 +147,15 @@ class HexCell {
 		this.parentID = -1;
 		this.health = -1;
 
-		this.vertices = this.precalc(x, y);
+		this.vertices = traditionalArrangement ? this.precalc(x, y) : this.precalc2(x, y);
 	}
 
 	precalc(gridX, gridY) {
+
+		// this is for drawing a regular hexagon tiling
+		// see: https://en.wikipedia.org/wiki/Hexagonal_tiling
+		// p.s.: draws clockwise
+
 		let vertexStorage = [];
 		let startX = gridX * S;
 		let startY = gridY * H + H - (gridX % 2) * (H / 2);
@@ -160,6 +166,26 @@ class HexCell {
 		vertexStorage.push([startX + 2.0 * R, startY]);
 		vertexStorage.push([startX + 1.5 * R, startY + H / 2]);
 		vertexStorage.push([startX + 0.5 * R, startY + H / 2]);
+
+		return vertexStorage;
+	}
+
+	precalc2(gridX, gridY) {
+
+		// this is for drawing the alternative hexagon tiling
+		// that has the hexagons standing upright
+		// p.s.: draws counter-clockwise
+
+		let vertexStorage = [];
+		let startX = gridX * H + H / 2 - (gridY % 2) * (H / 2);
+		let startY = gridY * S + S;
+
+		vertexStorage.push([startX, startY]);
+		vertexStorage.push([startX + H / 2, startY + 0.5 * R]);
+		vertexStorage.push([startX + H, startY]);
+		vertexStorage.push([startX + H, startY - R]);
+		vertexStorage.push([startX + H / 2, startY - 1.5 * R]);
+		vertexStorage.push([startX, startY - R]);
 
 		return vertexStorage;
 	}
