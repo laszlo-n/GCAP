@@ -152,7 +152,7 @@ class HexCell {
 	precalc(gridX, gridY) {
 		let vertexStorage = [];
 		let startX = gridX * S;
-		let startY = gridY * H + H / 2 - (gridX % 2) * (H / 2);
+		let startY = gridY * H + H - (gridX % 2) * (H / 2);
 
 		vertexStorage.push([startX, startY]);
 		vertexStorage.push([startX + 0.5 * R, startY - H / 2]);
