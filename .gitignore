@@ -7,6 +7,11 @@ Simulation/doc/Documentation.xml
 WebApplication1/sim_*
 WebApplication1/*.txt
 
+Stat/doc/*
+Stat/bin/*
+Stat/.vscode/*
+Stat/Stat.csproj
+
 # NuGet Packages
 *.nupkg
 # The packages folder can be ignored because of Package Restore
