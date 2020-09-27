@@ -82,8 +82,10 @@ async function loadServerData() {
 }
 
 function draw() {
-	vpMinCorner = findCellAt(0 - 2 * R - distX, 0 - 2 * R - distY);
-	vpMaxCorner = findCellAt(windowWidth + 2 * R - distX, windowHeight + 2 * R - distY);
+	// set up viewport boundaries for visibility testing
+	// it's fine to use 2 * R here as a "safety harness", since 2 * R is always bigger than H (sqrt(3) * R)
+	vpMinCorner = findIndexAt(0 - 2 * R - distX, 0 - 2 * R - distY);
+	vpMaxCorner = findIndexAt(windowWidth + 2 * R - distX, windowHeight + 2 * R - distY);
 
 	background(36, 36, 36);
 	stroke(144, 144, 144);
@@ -94,7 +96,9 @@ function draw() {
 							elem.gridRefY <= vpMaxCorner[1])
 			.forEach(cell => cell.draw(distX, distY));
 
-	loc = findCellAt(mouseX - distX, mouseY - distY);
+	// highlight the hovered over hexagon and store the hexagon index
+	// todo: handle chunk offsets
+	loc = findIndexAt(mouseX - distX, mouseY - distY);
 	cellGrid.filter(elem => elem.gridRefX == loc[0] && elem.gridRefY == loc[1])
 			.forEach(cell => cell.draw(distX, distY, [96, 96, 128]));
 
@@ -107,32 +111,48 @@ function draw() {
 	text("FPS: " + fps.toFixed(2) + ", Location: (" + loc[0] + ", " + loc[1] + ")", 10, windowHeight - 20);
 }
 
-function findCellAt(mX, mY) {
-	// kimeneti változók
+function findIndexAt(cursorX, cursorY) {
 	let outX = 0, outY = 0;
 
-	// ha "négyzetrácsokból" állna a grid, az (it, jt) vektor a
-	// grid-relatív koordinátákat adná meg.
-	let it = Math.floor(mX / S);
-	let yts = mY + (it % 2) * (H / 2);
-	let jt = Math.floor(yts / H);
-
-	// ez a "négyzetrácson" belüli relatív pozíciót adja meg
-	let xt = mX - it * S;
-	let yt = yts - jt * H;
-
-	if (xt > R * (0.5 - yt / H)) {
-		outX = it;
-		outY = jt;
-	} else if (yt > H / 2) {
-		outX = it - 1;
-		outY = jt + outX % 2;
-	} else {
-		outX = it - 1;
-		outY = jt + outX % 2 - 1;
+	// while crunching numbers I discovered that when using the other
+	// arrangement, all equations remain the same, only the variables
+	// get swapped around. This means we can just swap the inputs
+	// and it will work all the same!
+	if (!traditionalArrangement) {
+		cursorX += cursorY;
+		cursorY = cursorX - cursorY;
+		cursorX -= cursorY;
 	}
 
-	return [outX, outY];
+	// determine which hitbox the current cursor position falls into,
+	// with no regards to these hitboxes not being hexagon-shaped
+	let naiveX = Math.floor(cursorX / S);
+	let naiveY = Math.floor((cursorY - ((naiveX + 1) % 2) * (H / 2)) / H);
+
+	// determine where I am inside the hitbox
+	let internalX = cursorX - naiveX * S;
+	let internalY = cursorY - (naiveY * H + ((naiveX + 1) % 2) * (H / 2));
+
+	// use an abs equation to determine x values to compare against
+	// check if it falls within the acceptance area
+	if (internalX >= R * Math.abs(0.5 - internalY / H)) {
+		outX = naiveX;
+		outY = naiveY;
+	}
+
+	// check if it falls into the "higher" (refused) triangle's area
+	else if (internalY >= H / 2) {
+		outX = naiveX - 1;
+		outY = naiveY + outX % 2;
+	}
+
+	else {
+		outX = naiveX - 1;
+		outY = naiveY + outX % 2 - 1;
+	}
+
+	// if we swapped the inputs, we'll have to swap the outputs too
+	return traditionalArrangement ? [outX, outY] : [outY, outX];
 }
 
 class HexCell {
