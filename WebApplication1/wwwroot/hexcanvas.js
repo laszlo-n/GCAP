@@ -221,7 +221,10 @@ class HexCell {
 			textSize(R);
 			fill(255);
 			textAlign(CENTER, CENTER);
-			text(this.content, this.vertices[0][0] + R + offsetX, this.vertices[0][1] + offsetY);
+			if (traditionalArrangement) 
+				text(this.content, this.vertices[0][0] + R + offsetX, this.vertices[0][1] + offsetY);
+			else
+				text(this.content, this.vertices[0][0] + H / 2 + offsetX, this.vertices[0][1] - 0.5 * R + offsetY);
 		}
 	}
 }
