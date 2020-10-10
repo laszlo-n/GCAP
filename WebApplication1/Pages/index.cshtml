@@ -1,0 +1,45 @@
+﻿@page
+@model WebApplication1.Pages.indexModel
+@{ ViewData["Title"] = "index"; }
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Genetikus Sejtautomaták Hatszögrácson</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+    <script src="hexcanvas.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="efop.css">
+</head>
+<body>
+    <div id="overlay" class="card">
+        <div class="card-body">
+            <form>
+                <div>
+                    <button type="button" onclick="loadServerData()" class="btn btn-primary" id="simStart">Szimuláció indítása</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <nav aria-label="Page navigation example" id="simPager">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" id="prevButton" href="#" onclick="prev()" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item"><span contenteditable="true" class="text-box"><input class="form-control text-center" id="simID" type="number" onchange="requestRound()" min="0" max="999" placeholder=" " value="0"></span></li>
+            <li class="page-item">
+                <a class="page-link" id="nextButton" href="#" onclick="next()" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</body>
+</html>

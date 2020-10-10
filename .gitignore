@@ -1,0 +1,22 @@
+.vs
+.vscode
+**/obj
+**/bin
+Simulation/doc/*
+Simulation/doc/Documentation.xml
+WebApplication1/sim_*
+WebApplication1/*.txt
+
+Stat/doc/*
+Stat/bin/*
+Stat/.vscode/*
+Stat/Stat.csproj
+
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/packages/repositories.config

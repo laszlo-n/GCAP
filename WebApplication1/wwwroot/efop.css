@@ -1,0 +1,88 @@
+*:focus {
+  outline: none !important;
+}
+
+body {
+	margin: 0;
+	background: #000;
+	overflow: hidden;
+	min-height: 100%;
+}
+
+canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translateX(-50%) translateY(-50%);
+	transform: translateX(-50%) translateY(-50%);
+}
+
+#overlay {
+  position: fixed; /* Sit on top of the page content */
+  display: block; /* Hidden by default */
+  /*min-width: 8rem; /* Full width (cover the whole page) */
+  /*min-height: 3rem; /* Full height (cover the whole page) */
+  padding: 0em;
+  left: 1em;
+  bottom: 2em;
+  background-color: #212529; /* Black background with opacity */
+  color: white;
+  font-size: small;
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+}
+
+#simStart {
+  margin: 0;
+  border: none;
+}
+
+#simPager {
+  position: fixed; /* Sit on top of the page content */
+  display: block; /* Hidden by default */
+  right: 1em;
+  bottom: 1em;
+  z-index: 3;
+  visibility: hidden;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance:textfield;
+}
+
+#simID {
+  line-height: 1.5rem;
+  border-radius: .2rem;
+  width: 4rem;
+  background-color: #212529; /* Black background with opacity */
+  color: white;
+  border-color: #212529;
+}
+
+.text-box {
+  display: inline-block;
+}
+
+.text-box:focus {
+  outline:0;
+}
+
+.page-link {
+  background-color: #212529; /* Black background with opacity */
+  color: white;
+  border-color: #212529;
+}
+
+.page-link:hover {
+  background-color: #313539; /* Black background with opacity */
+  color: white;
+  border-color: #212529;
+}
